@@ -1,0 +1,107 @@
+﻿* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: sans-serif;
+}
+
+@font-face {
+    font-family: 'Yekan';
+    /* آدرس را از ریشه اصلی سایت (wwwroot) شروع کردیم */
+    src: url('/sitetamplate/fonts/yekan/Yekan.eot');
+    src: url('/sitetamplate/fonts/yekan/Yekan.eot?#iefix') format('embedded-opentype'), url('/sitetamplate/fonts/yekan/Yekan.woff2') format('woff2'), url('/sitetamplate/fonts/yekan/Yekan.woff') format('woff'), url('/sitetamplate/fonts/yekan/Yekan.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+body {
+    margin: 0;
+    direction: rtl;
+    font-family: 'Yekan', Tahoma, Arial, sans-serif;
+    direction: rtl;
+    line-height: 1.8; /* فاصله خطوط برای زیبایی بیشتر در فونت یکان */
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #0f4c81, #3da5ff);
+}
+
+.login-box {
+    background: #ffffff;
+    padding: 40px 30px;
+    width: 350px;
+    border-radius: 15px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    text-align: center;
+}
+
+    .login-box h2 {
+        margin-bottom: 25px;
+        color: #0f4c81;
+    }
+
+.input-group {
+    margin-bottom: 20px;
+    text-align: right;
+}
+
+    .input-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-size: 14px;
+        color: #333;
+    }
+
+    .input-group input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        transition: 0.3s;
+    }
+
+        .input-group input:focus {
+            border-color: #3da5ff;
+            outline: none;
+            box-shadow: 0 0 5px rgba(61,165,255,0.5);
+        }
+
+button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: #0f4c81;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+    button:hover {
+        background: #3da5ff;
+    }
+
+.extra {
+    margin-top: 15px;
+    font-size: 13px;
+}
+
+    .extra a {
+        color: #0f4c81;
+        text-decoration: none;
+    }
+
+        .extra a:hover {
+            text-decoration: underline;
+        }
+
+@media(max-width:400px) {
+    .login-box {
+        width: 90%;
+    }
+}

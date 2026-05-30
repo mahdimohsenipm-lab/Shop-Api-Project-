@@ -1,0 +1,139 @@
+﻿@using Services.ViewModel.Area.Model.Dto
+@model RequestPayDetailDto
+@{
+    ViewData["Title"] = "Detail";
+    Layout = "~/Areas/Admin/Views/Shared/AdminLayout.cshtml";
+}
+<div class="container py-5" dir="rtl">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="text-dark font-weight-bold">جزئیات تراکنش #@Model.Id</h3>
+
+        <a href="/Admin/Cart/Index" class="btn btn-outline-secondary rounded-pill">
+            <i class="fas fa-arrow-right mr-1"></i> بازگشت به لیست
+        </a>
+    </div>
+    <div class="row">
+        <!-- سمت راست: اطلاعات کاربر و تراکنش -->
+        <div class="col-lg-4">
+            <!-- کارت کاربر -->
+            <div class="card border-0 shadow-sm rounded-15 mb-4">
+                <div class="card-body text-center">
+                    <div class="bg-light-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                        <i class="fas fa-user-circle fa-3x text-primary"></i>
+                    </div>
+                    <h5 class="font-weight-bold">@Model.User.UserName</h5>
+                    <p class="text-muted small">@Model.User.Email</p>
+                    <hr>
+                    <div class="text-right">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">تاریخ پرداخت:</span>
+                            <span class="font-weight-bold">@Model.PayDate.ToString("yyyy/MM/dd")</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="text-muted">ساعت:</span>
+                            <span class="font-weight-bold">@Model.PayDate.ToString("HH:mm")</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- کارت خلاصه مالی -->
+        @if (Model.IsPay==true)
+            {
+                <div class="card border-0 shadow-sm rounded-15 bg-primary text-white">
+                    <div class="card-body">
+                        <h6 class="text-white-50">مبلغ کل پرداختی:</h6>
+                        <h2 class="font-weight-bold">@Model.Amount.ToString("N0") <small style="font-size: 1rem;">تومان</small></h2>
+                        <div class="mt-3 p-2 rounded" style="background: rgba(255,255,255,0.1);">
+                            <i class="fas fa-check-circle mr-1"></i> وضعیت: پرداخت موفق
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+
+                <div class="card border-0 shadow-sm rounded-15 bg-danger text-white">
+                    <div class="card-body">
+                        <h6>مبلغ کل پرداختی:</h6>
+                        <h2 class="font-weight-bold">@Model.Amount.ToString("N0") <small style="font-size: 1rem;">تومان</small></h2>
+                        <div class="mt-3 p-2 rounded" style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.2);">
+                            <i class="fas fa-times-circle mr-1"></i> وضعیت: پرداخت ناموفق
+                        </div>
+                    </div>
+                </div>
+
+
+            
+            }
+        </div>
+        <!-- سمت چپ: لیست محصولات -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-15">
+                <div class="card-header bg-white border-0 pt-4 px-4">
+                    <h5 class="font-weight-bold"><i class="fas fa-shopping-basket text-warning mr-2"></i> اقلام سفارش</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table align-items-center table-flush mb-0">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>محصول</th>
+                                    <th>برند</th>
+                                    <th>قیمت واحد</th>
+                                    <th class="text-center">تعداد</th>
+                                    <th>جمع کل</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Items)
+                                {
+                                    <tr>
+                                        <td>
+                                            <span class="font-weight-bold text-dark">@item.ProductName</span>
+                                        </td>
+                                        <td><span class="badge badge-light">@item.Brand</span></td>
+                                        <td>@item.Price.ToString("N0")</td>
+                                        <td class="text-center">
+                                            @* در اینجا باید تعداد را از جایی بخوانید *@
+                                            <span class="badge badge-pill badge-primary">@item.Count</span>
+                                        </td>
+                                        <td class="font-weight-bold text-primary">@item.Price.ToString("N0")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer bg-light border-0 px-4 py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-muted">شناسه سفارش دیتابیس:</span>
+                        <span class="badge badge-dark">@Model.RefId</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .rounded-15 {
+        border-radius: 15px !important;
+    }
+
+    .bg-light-primary {
+        background-color: #eef2ff !important;
+    }
+
+    .table thead th {
+        font-size: 0.85rem;
+        padding: 1rem;
+    }
+
+    .table td {
+        padding: 1.2rem 1rem;
+    }
+</style>
+
+
+
+

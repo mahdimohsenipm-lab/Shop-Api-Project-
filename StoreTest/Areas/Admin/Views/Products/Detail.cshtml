@@ -1,0 +1,161 @@
+﻿
+@using Services.ProductsServices.Querys.GetProductDetail
+@model ResultDtoProduct
+@{
+    ViewData["Title"] = "Detail";
+    Layout = "~/Areas/Admin/Views/Shared/AdminLayout.cshtml";
+}
+
+
+
+<div class="col-sm-12">
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title-wrap bar-warning">
+                <div class="card-title">اطلاعات بیشتر در مورد محصول</div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="card-block">
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                        <ul class="no-list-style">
+                            <li class="mb-2">
+                                <span class="primary text-bold-500"><a><i class="ft-home font-small-3"></i>  محصول</a></span>
+                                <span class="line-height-2 display-block overflow-hidden">@Model.Name</span>
+                            </li>
+                            <li class="mb-2">
+                                <span class="primary text-bold-500"><a><i class="ft-briefcase font-small-3"></i> برند</a></span>
+                                <span class="line-height-2 display-block overflow-hidden"> @Model.Brand</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                        <ul class="no-list-style">
+                            <li class="mb-2">
+                                <span class="primary text-bold-500"><a><i class="ft-home font-small-3"></i> دسته بندی</a></span>
+                                <span class="line-height-2 display-block overflow-hidden">@Model.Category</span>
+                            </li>
+                            <li class="mb-2">
+                                <span class="primary text-bold-500"><a><i class="ft-home font-small-3"></i>قیمت</a></span>
+                                <span class="line-height-2 display-block overflow-hidden"> @Model.Price.ToString("n0")</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                        <ul class="no-list-style">
+                            <li class="mb-2">
+                                <span class="primary text-bold-500"><a><i class="ft-home font-small-3"></i>موجودی</a></span>
+                                <span class="line-height-2 display-block overflow-hidden">@Model.Inventory</span>
+                            </li>
+                            <li class="mb-2">
+                                <span class="primary text-bold-500"><a><i class="ft-home font-small-3"></i>نمایش در سایت؟</a></span>
+                                <span class="line-height-2 display-block overflow-hidden"> @Model.Displayed</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+                        <ul class="no-list-style">
+                            <li class="">
+                                <span class="primary text-bold-500"><a><i class="ft-home font-small-3"></i>توضیحات</a></span>
+                                <span class="line-height-2 display-block overflow-hidden">@Model.Description</span>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4">
+    <div class="card-header bg-gradient text-white py-3" style="background: linear-gradient(90deg, #0069d9 0%, #00b4d8 100%);">
+        <h5 class="mb-0 fw-bold">
+            <i class="bi bi-box-seam me-2"></i> تصاویر و ویژگی‌های محصول
+        </h5>
+    </div>
+
+    <div class="card-body p-4">
+        <div class="row g-4 align-items-start">
+
+            <!-- ویژگی‌های محصول -->
+            <div class="col-12 col-lg-4">
+                <div class="border rounded-3 p-3 shadow-sm bg-light">
+                    <h6 class="fw-bold text-primary mb-3">
+                        <i class="bi bi-list-check me-2"></i> ویژگی‌ها
+                    </h6>
+
+                    @if (Model.ProductFitures != null && Model.ProductFitures.Any())
+
+                    {
+                        <ul class="list-group list-group-flush">
+                            @foreach (var item in Model.ProductFitures)
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-center border-0 border-bottom py-2">
+                                    <div class="d-flex align-items-center gap-2 text-dark">
+                                        <i class="bi bi-tag-fill text-primary"></i>
+                                        <span class="fw-semibold">@item.Title</span>
+                                    </div>
+                                    <span class="badge bg-primary-subtle text-dark px-3 py-2 rounded-pill">@item.Description</span>
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <p class="text-muted text-center m-0">ویژگی‌ای ثبت نشده است.</p>
+                    }
+                </div>
+            </div>
+
+            <!-- تصاویر محصول -->
+            <div class="col-12 col-lg-8">
+                <div class="border rounded-3 p-3 bg-light shadow-sm">
+                    <h6 class="fw-bold text-primary mb-3">
+                        <i class="bi bi-images me-2"></i> گالری تصاویر
+                    </h6>
+
+                    @if (Model.ProductImages != null && Model.ProductImages.Any())
+                    {
+                        <div class="row g-3">
+                            @foreach (var item in Model.ProductImages)
+                            {
+                                <div class="col-6 col-md-4 col-xl-3">
+                                    <div class="position-relative image-card overflow-hidden rounded-3 shadow-sm">
+                                        <a target="_blank" href="~/@item.Src">
+                                            <img src="~/@item.Src" class="img-fluid rounded-3" alt="Product Image" />
+                                        </a>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted text-center m-0">تصویری برای این محصول ثبت نشده است.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* کارت تصاویر با افکت زیبا */
+    .image-card img {
+        transition: all 0.3s ease-in-out;
+        cursor: pointer;
+    }
+
+    .image-card:hover img {
+        transform: scale(1.05);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+
+
+</style>

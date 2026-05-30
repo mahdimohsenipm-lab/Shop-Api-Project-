@@ -1,0 +1,201 @@
+﻿@using X.PagedList
+@using X.PagedList.Mvc.Core
+@using Services.ViewModel.Area.Model.Dto;
+@model IPagedList<PayRquestDto>
+@{
+    ViewData["Title"] = "RequestPay";
+    Layout = "~/Areas/Admin/Views/Shared/AdminLayout.cshtml";
+}
+
+
+<style>
+    body { background-color: #f8f9fa; }
+    .main-card { border: none; border-radius: 15px; box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1); overflow: hidden; }
+    .card-header-custom { background: linear-gradient(45deg, #4e73df, #224abe); color: white; padding: 1.5rem; }
+    .table thead th { background-color: #f1f3f9; border-top: none; color: #4e73df; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .table td { vertical-align: middle !important; }
+    .amount-badge { font-size: 0.95rem; padding: 8px 12px; border-radius: 8px; background-color: #eafaf1; color: #2ecc71; font-weight: bold; }
+    .ref-id { font-family: 'Consolas', monospace; color: #6c757d; font-weight: 600; }
+    .page-item.active .page-link { background-color: #4e73df; border-color: #4e73df; }
+    .pagination-container { display: flex; justify-content: space-between; align-items: center; padding: 1rem; }
+</style>
+<div class="container py-5" dir="rtl">
+    <div class="card main-card">
+        <!-- Header -->
+        <div class="card-header-custom d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+                <i class="fas fa-file-invoice-dollar mr-2"></i> 
+                لیست تراکنش‌های موفق
+            </h5>
+            <span class="badge badge-pill badge-light text-primary">
+                تعداد کل: @Model.TotalItemCount
+            </span>
+        </div>
+<!-- Body -->
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th class="text-center">#</th>
+                            <th>شناسه پرداخت</th>
+                            <th>مبلغ تراکنش</th>
+                            <th>شماره مرجع (RefId)</th>
+                            <th>تاریخ و ساعت</th>
+                            <th class="text-center">عملیات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="text-center text-muted"></td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="icon-shape bg-light-primary text-primary rounded-circle mr-3">
+                                            <i class="fas fa-hashtag"></i>
+                                        </div>
+                                        <span class="font-weight-bold">@item.Id</span>
+                                    </div>
+                                </td>
+                                <td>
+                                   @if (item.IsPay==true)
+                                    {
+                                         <span class="amount-badge">
+                                        @item.Amount.ToString("N0") <small>تومان</small>
+                                    </span>
+                                    }
+                                    else
+                                    {
+                                          <span class="amount-badge text-danger">
+                                        @item.Amount.ToString("N0") <small>تومان</small>
+                                          </span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (item.RefId == 0)
+                                    {
+                                        <code class="ref-id text-danger" >پرداخت ناموفق</code>
+                                    }
+                                    else
+                                    {
+                                    <code class="ref-id">@(item.RefId)</code>    
+                                    
+                                    }
+
+                                </td>
+                                <td>
+                                    <div class="d-flex flex-column">
+                                        <span class="text-dark">
+                                            <i class="far fa-calendar-alt text-muted mr-1"></i> 
+                                            @item.PayDate.ToString("yyyy/MM/dd")
+                                        </span>
+                                        <small class="text-muted">
+                                            <i class="far fa-clock text-muted mr-1"></i> 
+                                            @item.PayDate.ToString("HH:mm")
+                                        </small>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <a href="/Admin/Cart/Detail/@item.Id" class="btn btn-outline-primary btn-sm rounded-pill px-3">
+                                       <i class="fas fa-info-circle"></i> جزئیات
+                                     </a>
+                                    <button onclick="Delete(@item.Id)" class="btn btn-danger btn-sm rounded-pill px-3">
+                                    <i class="fas fa-trash"></i> حذف
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+<!-- Footer / Pagination -->
+        <div class="card-footer bg-white border-top-0">
+            <div class="pagination-container">
+                <div class="text-muted small">
+                    نمایش @Model.FirstItemOnPage تا @Model.LastItemOnPage از @Model.TotalItemCount رکورد
+                </div>
+<nav aria-label="Page navigation">
+                    @Html.PagedListPager(Model, page => Url.Action("Index", new { page }), 
+                        new PagedListRenderOptions {
+                            LiElementClasses = new string[] { "page-item" },
+                            PageClasses = new string[] { "page-link" },
+                            UlElementClasses = new string[] { "pagination", "pagination-sm", "mb-0" },
+                            ContainerDivClasses = new string[] { "pagination-container" },
+                            DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+                            DisplayLinkToLastPage = PagedListDisplayMode.Always,
+                            LinkToFirstPageFormat = "« ابتدا",
+                            LinkToLastPageFormat = "انتها »",
+                             Display = PagedListDisplayMode.IfNeeded 
+                        })
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <link href="~/Sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+    <script src="~/Sweetalert2/sweetalert2.min.js"></script>
+    <script>
+
+
+         function Delete(Id) {
+            swal.fire({
+                title: 'حذف فاکتور',
+                text: "کاربر گرامی از حذف فاکتور مطمئن هستید؟",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#7cacbe',
+                confirmButtonText: 'بله ،  حذف شود',
+                cancelButtonText: 'خیر'
+            }).then((result) => {
+                if (result.value) {
+                    var postData = {
+                        'id': Id,
+                    };
+
+                    $.ajax({
+                        contentType: 'application/x-www-form-urlencoded',
+                        dataType: 'json',
+                        type: "POST",
+                        url: "Delete",
+                        data: postData,
+                        success: function (data) {
+                            if (data.isSuccess == true) {
+                                swal.fire(
+                                    'موفق!',
+                                    data.message,
+                                    'success'
+                                ).then(function (isConfirm) {
+                                    location.reload();
+                                });
+                            }
+                            else {
+
+                                swal.fire(
+                                    'هشدار!',
+                                    data.message,
+                                    'warning'
+                                );
+
+                            }
+                        },
+                        error: function (request, status, error) {
+                            alert(request.responseText);
+                        }
+
+                    });
+
+                }
+            })
+        }
+
+    </script>
+
+}
+                              
+ 

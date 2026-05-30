@@ -1,0 +1,243 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Store~Test"] - پنل مدیریت</title>
+    <!-- Bootstrap -->
+
+    <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+
+    <!-- Main Dashboard & Site CSS -->
+    <link href="~/itemtamplate/css/dashboard/create.css" rel="stylesheet" />
+
+    <link href="~/itemtamplate/css/dashboard/app.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="~/itemtamplate/css/site.css" />
+
+    <!-- Icon Fonts -->
+    <link href="~/itemtamplate/fonts/feather/style.min.css" rel="stylesheet" />
+    <link href="~/itemtamplate/fonts/simple-line-icons/style.css" rel="stylesheet" />
+    <link href="~/fonts/font-awesome/font-awesome.min.css" rel="stylesheet" />
+
+    <!-- Persian Datepicker -->
+
+    <link href="/itemtamplate/css/dashboard/persian-datepicker/persian-datepicker.min.css" rel="stylesheet" />
+    <!-- Dashboard Additional Styles -->
+    <link href="~/itemtamplate/css/dashboard/perfect-scrollbar.min.css" rel="stylesheet" />
+    <link href="~/itemtamplate/css/dashboard/prism.min.css" rel="stylesheet" />
+    <link href="~/itemtamplate/css/dashboard/chartist.min.css" rel="stylesheet" />
+    <link href="~/itemtamplate/css/dashboard/custom-rtl.css" rel="stylesheet" />
+    <link href="~/itemtamplate/css/dashboard/march.css" rel="stylesheet" />
+
+</head>
+
+<body>
+    <header></header>
+
+
+
+    <div class="wrapper">
+        <!-- main menu-->
+        <!--.main-menu(class="#{menuColor} #{menuOpenType}", class=(menuShadow == true ? 'menu-shadow' : ''))-->
+        <div data-active-color="white" data-background-color="black" data-image="/AdminImage/loginHeader.jpg" class="app-sidebar">
+
+            <!-- main menu header-->
+            <!-- Sidebar Header starts-->
+            <div class="sidebar-header">
+                <div class="logo clearfix">
+                    <a asp-action="Index" asp-controller="Home" class="logo-text ">
+                        @*    <div class="logo-img"> </div><span class="text " style=" font-size: 13px; margin-right: -43px; color: #c5c5c5"> *@
+                        @*  @if (User?.Claims?.LastOrDefault(c => c.Type == "UserName")?.Value != null)
+                            {
+                                <i class="fa fa-user"></i>
+                                var userNameClaim = User.Claims.LastOrDefault(c => c.Type == "UserName");
+                                var userName = userNameClaim?.Value; 
+
+                            } *@
+                    </a>
+                    @*   </span> *@
+                    @*                     </a><a id="sidebarToggle" href="javascript:;" class="nav-toggle d-none d-sm-none d-md-none d-lg-block"><i data-toggle="expanded" class="ft-toggle-right toggle-icon"></i></a><a id="sidebarClose" href="javascript:;" class="nav-close d-block d-md-block d-lg-none d-xl-none"><i class="ft-x"></i></a>
+ *@                </div>
+            </div>
+
+            <div class="sidebar-content">
+
+                <div class="nav-container">
+
+                    <ul id="main-menu-navigation" data-menu="menu-navigation" class="navigation navigation-main">
+
+                        <li class="nav-item">
+                            <a href="/Admin/AdminUser/Index"><i class="fa fa-map-marker"></i><span data-i18n="">صفحه اصلی</span></a>
+
+                        </li>
+
+
+                        <li class="has-sub nav-item">
+                            <a><i class="fa fa-map-marker"></i><span data-i18n="" class="menu-title"> کاربر   </span></a>
+                            <ul class="menu-content">
+                                <li asp-active-controllers="User" asp-active-actions="Create" class="nav-item">
+                                    <a href="/Admin/AdminUser/Create" class="menu-item">اضافه کردن کاربر</a>
+
+                                </li>
+                                <li asp-active-controllers="User" asp-active-actions="Create" class="nav-item">
+                                    <a href="/Admin/AdminUser/Index" class="menu-item">دیدن کاربر</a>
+
+                                </li>
+                            </ul>
+
+
+                         
+                        </li>
+                        <li class="has-sub nav-item">
+                            <a><i class="fa fa-map-marker"></i><span data-i18n="" class="menu-title"> خدمات دسته بندی </span></a>
+                            <ul class="menu-content">
+                                <li asp-active-controllers="User" asp-active-actions="Create" class="nav-item">
+                                    <a href="/Admin/Category/Index" class="menu-item">دسته بندی</a>
+                                </li>
+                            </ul>
+
+                        <li class="has-sub nav-item">
+                            <a><i class="fa fa-map-marker"></i><span data-i18n="" class="menu-title">  فاکتور </span></a>
+                            <ul class="menu-content">
+                                <li asp-active-controllers="User" asp-active-actions="Create" class="nav-item">
+                                    <a href="/Admin/Cart/index" class="menu-item"> فاکتور ها</a>
+                                </li>
+                            </ul>
+
+
+                        <li class="has-sub nav-item">
+                            <a><i class="fa fa-map-marker"></i><span data-i18n="" class="menu-title">  تخفیف </span></a>
+                            <ul class="menu-content">
+                                <li asp-active-controllers="User" asp-active-actions="Create" class="nav-item">
+                                    <a href="/Admin/Discount/index" class="menu-item">تخفیف ها </a>
+                                </li>
+                            </ul>
+
+
+
+                    @*     <li class="has-sub nav-item">
+                            <a><i class="fa fa-map-marker"></i><span data-i18n="" class="menu-title">  خدمات بنر  </span></a>
+                            <ul class="menu-content">
+                                <li asp-active-controllers="User" asp-active-actions="Create" class="nav-item">
+                                    <a href="/Admin/HomePageImage/Add" class="menu-item">اضافه کردن بنر جدید</a>
+
+                                </li>
+                                <li asp-active-controllers="User" asp-active-actions="Create" class="nav-item">
+                                    <a href="/Admin/HomePageImage/Index" class="menu-item">دیدن بنر ها</a>
+
+                                </li>
+                            </ul> *@
+
+                        <li class="has-sub nav-item">
+                            <a><i class="fa fa-map-marker"></i><span data-i18n="" class="menu-title">   محصولات  </span></a>
+                            <ul class="menu-content">
+                                <li asp-active-controllers="User" asp-active-actions="Create" class="nav-item">
+                                    <a href="/Admin/Products/Create" class="menu-item">اضافه کردن  </a>
+                                </li>
+                                <li asp-active-controllers="User" asp-active-actions="Create" class="nav-item">
+                                    <a href="/Admin/Products/Index" class="menu-item">دیدن  </a>
+
+                                </li>
+                            </ul>
+
+                    </ul>
+                </div>
+            </div>
+
+            <div class="sidebar-background"></div>
+
+        </div>
+
+
+
+        <nav class="navbar navbar-expand-lg navbar-light bg-faded header-navbar">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" data-toggle="collapse" class="navbar-toggle d-lg-none float-left"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button><span class="d-lg-none navbar-right navbar-collapse-toggle"><a aria-controls="navbarSupportedContent" href="javascript:;" class="open-navbar-container black"><i class="ft-more-vertical"></i></a></span>
+                    <form role="search" class="navbar-form navbar-right mt-1">
+                        <div class="position-relative has-icon-right">
+                        </div>
+                    </form>
+                </div>
+                <div class="navbar-container">
+                    <div id="navbarSupportedContent" class="collapse navbar-collapse">
+                        <ul class="navbar-nav">
+                           
+
+
+                            <li class="dropdown nav-item">
+                                <a id="dropdownBasic3" href="#" data-toggle="dropdown" class="nav-link position-relative dropdown-toggle">
+                                    <i class="ft-user font-medium-3 blue-grey darken-4"></i>
+                                    <p class="d-none">User Settings</p>
+                                </a>
+                                <div ngbdropdownmenu="" aria-labelledby="dropdownBasic3" class="dropdown-menu text-left dropdown-menu-right">
+
+
+                                    <form id="fromlogout" asp-area="Identity" asp-page="/Admin/Authentication/AccessDenied" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                                    </form>
+
+
+                                    <a id="logout" href="#" class="dropdown-item">
+                                        <i class="ft-power mr-2"></i>
+                                        <span> خروج </span>
+                                    </a>
+
+
+
+                                </div>
+                            </li>
+
+
+                            @*<li class="nav-item d-none d-lg-block">
+                                    <a href="javascript:;" class="nav-link position-relative notification-sidebar-toggle">
+                                        <i class="ft-align-left font-medium-3 blue-grey darken-4"></i>
+                                        <p class="d-none">Notifications Sidebar</p>
+                                    </a>
+                                </li>*@
+
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Navbar (Header) Ends-->
+        <div class="main-panel">
+            <div class="main-content">
+                <div class="content-wrapper">
+                    <div id="pjax-container">
+                        @RenderBody()
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+
+        <!-- jQuery Validation -->
+
+        <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+        <!-- پلاگین‌ها -->
+        <script src="~/itemtamplate/js/Dashboard/Step/multi-step-form.js"></script>
+        <script src="~/itemtamplate/js/Dashboard/perfect-scrollbar.jquery.min.js"></script>
+        <script src="~/itemtamplate/js/Dashboard/jquery-pjax/jquery.pjax.js"></script>
+
+        <!-- Bootstrap -->
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- سایر اسکریپت‌ها -->
+        <script src="~/itemtamplate/js/Dashboard/app-sidebar.js"></script>
+        <script src="~/itemtamplate/js/Dashboard/notification-sidebar.js"></script>
+        <script src="~/itemtamplate/js/Dashboard/customizer.js"></script>
+        <script src="~/itemtamplate/js/Dashboard/quill/quill.js"></script>
+        <script src="~/itemtamplate/js/site.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+        @await RenderSectionAsync("Modals", required: false)
+        @await RenderSectionAsync("DiscountModals", required: false)
+
+</body>
+</html>

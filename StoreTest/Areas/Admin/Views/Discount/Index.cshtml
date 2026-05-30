@@ -1,0 +1,230 @@
+﻿@using X.PagedList
+@using X.PagedList.Mvc.Core
+@using Services.ViewModel.Area.Model.Request
+@model RequestGetDiscount
+
+@{
+    ViewData["Title"] = "لیست تخفیف‌ها"; // عنوان صفحه
+    Layout = "~/Areas/Admin/Views/Shared/AdminLayout.cshtml";
+}
+
+<div class="container-fluid mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">لیست تخفیف‌ها</h4>
+        </div>
+        <div class="card-body p-0">
+            @* padding را حذف کردم تا جدول کل عرض را بگیرد *@
+            <div class="table-responsive">
+                <table class="table table-hover table-striped table-bordered align-middle mb-0">
+                    @* mb-0 برای حذف مارجین پایین *@
+                    <thead class="bg-light text-dark">
+                        @* تغییر رنگ سربرگ برای خوانایی بهتر *@
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">نام محصول</th>
+                            <th scope="col">مقدار</th>
+                            <th scope="col">درصد</th>
+                            <th scope="col">وضعیت</th>
+                            <th scope="col" class="text-center">عملیات</th> @* سربرگ عملیات را وسط چین کردم *@
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Discounts != null && Model.Discounts.Any())
+                        {
+                            @foreach (var item in Model.Discounts)
+                            {
+                                <tr>
+                                    <td>@item.Id</td>
+                                    <td>@item.ProductName</td>
+                                    <td class="text-end">@(item.Amount.HasValue? item.Amount.Value.ToString("N0") : "-")</td> @* اعداد را راست چین کردم *@
+                                    <td class="text-end">@(item.Percentage.HasValue? item.Percentage.Value.ToString("N0") + "%" : "-")</td> @* اعداد را راست چین کردم *@
+                                    <td>
+                                        @if (item.IsActive==true)
+                                        {
+                                            <span class="badge bg-success rounded-pill">فعال</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary rounded-pill">غیرفعال</span>
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <a asp-action="Edit" onclick="UserSatusChange(@item.Id)" class="btn btn-outline-primary btn-sm">
+                                                <i class="fas fa-edit"></i> تغییر وضعیت
+                                            </a>
+                                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger btn-sm" onclick="Delete(@item.Id)">
+                                                <i class="fas fa-trash-alt"></i> حذف
+                                            </a>
+                                           
+                                           <a href="~/Admin/Discount/Detail/@item.ProductId?status=true" class="btn btn-outline-info btn-sm"><i class="fas fa-info-circle"></i> جزئیات</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center text-muted fst-italic py-4">هیچ تخفیفی یافت نشد.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card-footer bg-white border-top">
+    <div class="d-flex align-items-center justify-content-between flex-wrap">
+<!-- بخش آمار با متن رابط مناسب -->
+        <div class="text-muted small py-2">
+            نمایش 
+            <span class="badge bg-light text-dark border">@Model.Discounts.FirstItemOnPage</span> 
+            تا 
+            <span class="badge bg-light text-dark border">@Model.Discounts.LastItemOnPage</span> 
+            از مجموع 
+            <span class="text-primary fw-bold">@Model.Discounts.TotalItemCount</span> 
+            رکورد ثبت شده
+        </div>
+<!-- بخش دکمه‌های صفحه‌بندی -->
+        <nav aria-label="Page navigation">
+            @Html.PagedListPager(Model.Discounts, page => Url.Action("Index", new { page }), 
+                new PagedListRenderOptions {
+                    LiElementClasses = new string[] { "page-item" },
+                    PageClasses = new string[] { "page-link" },
+                    UlElementClasses = new string[] { "pagination", "pagination-sm", "mb-0" },
+                    DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+                    DisplayLinkToLastPage = PagedListDisplayMode.Always,
+                    LinkToFirstPageFormat = "« ابتدا",
+                    LinkToLastPageFormat = "انتها »",
+                    LinkToNextPageFormat = "بعدی",
+                    LinkToPreviousPageFormat = "قبلی",
+                    // این گزینه باعث می‌شود اگر کلاً ۱ صفحه داشتیم، بخش صفحه‌بندی مخفی شود
+                    Display = PagedListDisplayMode.IfNeeded 
+                })
+        </nav>
+</div>
+</div>
+
+
+@section Scripts
+{
+    <link href="~/Sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+    <script src="~/Sweetalert2/sweetalert2.min.js"></script>
+
+    <script>
+         function Delete(Id) {
+         swal.fire({
+             title: 'حذف ',
+             text: "کاربر گرامی از حذف  مطمئن هستید؟",
+             icon: 'warning',
+             showCancelButton: true,
+             confirmButtonColor: '#d33',
+             cancelButtonColor: '#7cacbe',
+             confirmButtonText: 'بله ،  حذف شود',
+             cancelButtonText: 'خیر'
+         }).then((result) => {
+             if (result.value) {
+                 var postData = {
+                     'Id': Id,
+                 };
+
+                 $.ajax({
+                     contentType: 'application/x-www-form-urlencoded',
+                     dataType: 'json',
+                     type: "POST",
+                     url: "/Admin/Discount/Delete",
+                     data: postData,
+                     success: function (data) {
+                         if (data.isSuccess == true) {
+                             swal.fire(
+                                 'موفق!',
+                                 data.message,
+                                 'success'
+                             ).then(function (isConfirm) {
+                                  window.location.href = "/Admin/Discount/index";
+                             });
+                         }
+                         else {
+
+                             swal.fire(
+                                 'هشدار!',
+                                 data.message,
+                                 'warning'
+                             );
+
+                         }
+                     },
+                     error: function (request, status, error) {
+                         alert(request.responseText);
+                     }
+
+                 });
+
+             }
+         })
+     }
+
+
+      function UserSatusChange(Id) {
+            swal.fire({
+                title: 'تغییر وضعیت ',
+                text: "کاربر گرامی از تغییر وضعیت  مطمئن هستید؟",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#7cacbe',
+                confirmButtonText: 'بله ، تغییر وضعیت انجام شود',
+                cancelButtonText: 'خیر'
+            }).then((result) => {
+                if (result.value) {
+
+                    var postData = {
+                        'Id': Id,
+                    };
+
+                    $.ajax({
+                        contentType: 'application/x-www-form-urlencoded',
+                        dataType: 'json',
+                        type: "POST",
+                        url: "/Admin/Discount/StatusChenge",
+                        data: postData,
+                        success: function (data) {
+                            if (data.isSuccess == true) {
+                                swal.fire(
+                                    'موفق!',
+                                    data.message,
+                                    'success'
+                                ).then(function (isConfirm) {
+                                    location.reload();
+                                });
+                            }
+                            else {
+
+                                swal.fire(
+                                    'هشدار!',
+                                    data.message,
+                                    'warning'
+                                );
+
+                            }
+                        },
+                        error: function (request, status, error) {
+                            alert(request.responseText);
+                        }
+
+                    });
+
+                }
+            })
+        }
+
+
+
+
+        </script>
+}
+        

@@ -1,0 +1,95 @@
+
+@font-face {
+    font-family: iran;
+    font-style: normal;
+    font-weight: normal;
+    src: url('../../Fonts/iran/eot/IRANSansWeb(FaNum).eot');
+    src: url('../../Fonts/iran/eot/IRANSansWeb(FaNum).eot?#iefix') format('embedded-opentype'), /* IE6-8 */
+    url('../../Fonts/iran/woff2/IRANSansWeb(FaNum).woff2') format('woff2'), /* FF39+,Chrome36+, Opera24+*/
+    url('../../Fonts/iran/woff/IRANSansWeb(FaNum).woff') format('woff'), /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
+    url('../../Fonts/iran/ttf/IRANSansWeb(FaNum).ttf') format('truetype');
+}
+
+body {
+  direction : rtl;
+}
+
+
+div.hopscotch-bubble .hopscotch-bubble-arrow-container.left {
+  left : -34px;
+}
+
+.tagging .tag {
+  padding : 7px 0 7px 24px;
+}
+
+.tagging .tag span {
+  border-radius : 0 2px 2px 0;
+}
+
+.tagging .tag .tag-i {
+  right : auto;
+  left : 8px;
+}
+
+.main-panel {
+  -webkit-transform : none;
+     -moz-transform : none;
+      -ms-transform : none;
+       -o-transform : none;
+          transform : none;
+}
+
+.main-content .wizard > .steps > ul > li:before {
+  left : auto;
+  right : 0;
+}
+
+.main-content .wizard > .steps > ul > li:after {
+  right : auto !important;
+  left : 0;
+}
+
+.cropper-container {
+  direction : ltr !important;
+}
+
+#rtl-icon {
+  top : 43%;
+  left : -1px;
+}
+
+
+.app-sidebar .navigation li ul li a, .off-canvas-sidebar .navigation li ul li a {
+    display: block;
+    padding: 8px 30px 8px 18px;
+}
+
+.badge {
+  font-family: iran;
+}
+
+.app-sidebar .navigation .badge.badge-pill, .off-canvas-sidebar .navigation .badge.badge-pill {
+    padding: 8px 10px 5px 10px;
+        top: 5px;
+
+}
+
+input, button, select, optgroup, textarea {
+    margin: 0;
+    font-family: iran;
+    font-size: inherit;
+    line-height: inherit;
+}
+
+.app-sidebar .navigation li.has-sub > a:after, .off-canvas-sidebar .navigation li.has-sub > a:after {
+    content: '\e928';
+}
+.font-large-1 {
+  font-family: iran;
+}
+.media .media-body ,.card,.card-title,.footer,.navbar-form,.notification-dropdown , .dropdown-menu span ,.media-body .font-medium-1{
+    font-family: iran;
+}
+
+

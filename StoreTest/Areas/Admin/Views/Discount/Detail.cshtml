@@ -1,0 +1,407 @@
+﻿@using Services.DiscountService.Area.GetDiscountDetail
+@using Services.DiscountService.GetDiscountDetail
+@model ProductDiscountDetaliDto
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/AdminLayout.cshtml";
+}
+
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4 class="mb-0">جزئیات تخفیف محصول</h4>
+                </div>
+
+                <div class="card-body">
+
+                    <div class="form-group">
+                        <label>نام محصول</label>
+                        <input type="text" class="form-control" value="@Model.ProductName" readonly />
+                    </div>
+
+                    <div class="form-group">
+                        <label>قیمت اصلی</label>
+                        <input type="text" class="form-control text-danger font-weight-bold"
+                               value="@Model.ProductPrice.ToString("N0") تومان" readonly />
+                    </div>
+
+                    @if (Model.AmountDiscount.HasValue)
+                    {
+                        <div class="form-group">
+                            <label>مبلغ تخفیف</label>
+                            <input type="text" class="form-control text-warning font-weight-bold"
+                                   value="@Model.AmountDiscount.Value.ToString("N0") تومان" readonly />
+                        </div>
+                    }
+
+                    @if (Model.PercentageDiscount.HasValue)
+                    {
+                        <div class="form-group">
+                            <label>درصد تخفیف</label>
+                            <input type="text" class="form-control text-info font-weight-bold"
+                                   value="@Model.PercentageDiscount.Value %"
+                                   readonly />
+                        </div>
+                    }
+
+                    <hr />
+
+                    <div class="form-group">
+                        <label>قیمت نهایی</label>
+                        <input type="text"
+                               class="form-control bg-success text-white font-weight-bold"
+                               value="@Model.FinalPrice.ToString("N0") تومان"
+                               readonly />
+                    </div>
+
+                    <div class="form-group">
+                        <label>تاریخ پایان</label>
+                        <input type="text"
+                               class="form-control bg-secondary text-white font-weight-bold"
+                               value="@Model.EndTime.ToString("yyyy/MM/dd HH:mm")"
+                               readonly />
+                    </div>
+
+                </div>
+
+                <div class="card-footer text-center">
+                    @if (Model.index==true)
+                    {
+                        <a href="~/Admin/Discount/index" class="btn btn-secondary">
+                            بازگشت
+                        </a>
+                    }
+                    else
+                    {
+                        <a href="~/Admin/Products/index" class="btn btn-secondary">
+                            بازگشت
+                        </a>
+                    }
+                   
+                    <a onclick="Delete(@Model.Id)" class="btn btn-danger">
+                        حذف
+                    </a>
+                    <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#updateDiscountModal">
+                        ویرایش تخفیف
+                    </button>
+
+                </div>
+
+            
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <link href="~/Sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+    <script src="~/Sweetalert2/sweetalert2.min.js"></script>
+
+    <script>
+
+
+
+
+
+        function Delete(Id) {
+                swal.fire({
+                    title: 'حذف ',
+                    text: "کاربر گرامی از حذف  مطمئن هستید؟",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#7cacbe',
+                    confirmButtonText: 'بله ،  حذف شود',
+                    cancelButtonText: 'خیر'
+                }).then((result) => {
+                    if (result.value) {
+                        var postData = {
+                            'Id': Id,
+                        };
+
+                        $.ajax({
+                            contentType: 'application/x-www-form-urlencoded',
+                            dataType: 'json',
+                            type: "POST",
+                            url: "/Admin/Discount/Delete",
+                            data: postData,
+                            success: function (data) {
+                                if (data.isSuccess == true) {
+                                    swal.fire(
+                                        'موفق!',
+                                        data.message,
+                                        'success'
+                                    ).then(function (isConfirm) {
+                                         window.location.href = "/Admin/Products/index";
+                                    });
+                                }
+                                else {
+
+                                    swal.fire(
+                                        'هشدار!',
+                                        data.message,
+                                        'warning'
+                                    );
+
+                                }
+                            },
+                            error: function (request, status, error) {
+                                alert(request.responseText);
+                            }
+
+                        });
+
+                    }
+                })
+            }
+
+
+                    $(document).ready(function() {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); // ساعت را صفر می‌کنیم تا فقط تاریخ مدنظر باشد
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            const minDateString = `${year}-${month}-${day}`;
+
+            $('#EndTime').attr('min', minDateString);
+        });
+
+
+
+               
+        $(document).ready(function () {
+            toggleDiscountFields();
+
+            $('input[name="discountType"]').on('change', function () {
+                toggleDiscountFields();
+            });
+        });
+
+        function toggleDiscountFields() {
+            var type = $('input[name="discountType"]:checked').val();
+
+            if (type === 'amount') {
+                $('#AmountDiscount').prop('disabled', false);
+                $('#PercentageDiscount').prop('disabled', true).val('');
+            } else {
+                $('#AmountDiscount').prop('disabled', true).val('');
+                $('#PercentageDiscount').prop('disabled', false);
+            }
+        }
+
+        function updateDiscount() {
+            var discountType = $('input[name="discountType"]:checked').val();
+            var amountDiscount = $('#AmountDiscount').val();
+            var percentageDiscount = $('#PercentageDiscount').val();
+            var productPrice = parseFloat($('#ProductPrice').val());
+            var endTimeLocal = $('#EndTimeLocal').val();
+
+            const endDateValue = $('#EndTimeLocal').val();
+
+            
+
+        if (!endDateValue) {
+            swal.fire("خطا!", "لطفا تاریخ پایان تخفیف را وارد کنید.", "error");
+            return false;
+        }
+
+        const selectedDate = new Date(endDateValue);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        if (selectedDate < today) {
+            swal.fire("خطای تاریخ!", "تاریخ پایان تخفیف نمی‌تواند قبل از امروز باشد.", "error");
+            return false;
+        }
+
+
+            if (!endTimeLocal) {
+                swal.fire("خطا", "تاریخ پایان را وارد کنید", "error");
+                return;
+            }
+
+            if (discountType === 'amount') {
+                if (!amountDiscount) {
+                    swal.fire("خطا", "مبلغ تخفیف را وارد کنید", "error");
+                    return;
+                }
+
+                amountDiscount = parseFloat(amountDiscount);
+
+                if (amountDiscount <= 0) {
+                    swal.fire("خطا", "مبلغ تخفیف باید بزرگتر از صفر باشد", "error");
+                    return;
+                }
+
+                if (amountDiscount > productPrice) {
+                    swal.fire("خطا", "مبلغ تخفیف نمی‌تواند بیشتر از قیمت اصلی محصول باشد", "error");
+                    return;
+                }
+            }
+
+            if (discountType === 'percentage') {
+                if (!percentageDiscount) {
+                    swal.fire("خطا", "درصد تخفیف را وارد کنید", "error");
+                    return;
+                }
+
+                percentageDiscount = parseFloat(percentageDiscount);
+
+                if (percentageDiscount <= 0) {
+                    swal.fire("خطا", "درصد تخفیف باید بزرگتر از صفر باشد", "error");
+                    return;
+                }
+
+                if (percentageDiscount > 100) {
+                    swal.fire("خطا", "درصد تخفیف نمی‌تواند بیشتر از 100 باشد", "error");
+                    return;
+                }
+            }
+
+            var utcDate = new Date(endTimeLocal).toISOString();
+
+            $.ajax({
+                url: '/Admin/Discount/Update',
+                type: 'POST',
+                data: {
+                    Id: $('#DiscountId').val(),
+                    AmountDiscount: discountType === 'amount' ? amountDiscount : 0,
+                    PercentageDiscount: discountType === 'percentage' ? percentageDiscount : 0,
+                    EndTime: utcDate
+                },
+                success: function (data) {
+                            if (data.isSuccess == true) {
+                                swal.fire(
+                                    'موفق!',
+                                    data.message,
+                                    'success'
+                                ).then(function (isConfirm) {
+                                    location.reload();
+                                });
+                            }
+                            else {
+
+                                swal.fire(
+                                    'هشدار!',
+                                    data.message,
+                                    'warning'
+                                );
+
+                            }
+                        },
+                error: function () {
+                    swal("خطا", "ارتباط با سرور برقرار نشد", "error");
+                }
+            });
+        }
+  
+
+
+
+
+
+    </script>
+            }
+
+@section Modals
+{
+
+<div class="modal fade" id="updateDiscountModal" tabindex="-1" role="dialog" aria-labelledby="updateDiscountModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content border-0 shadow-lg rounded-lg">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title font-weight-bold" id="updateDiscountModalLabel">ویرایش تخفیف محصول</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true" class="text-white">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body p-4">
+                <input type="hidden" id="DiscountId" value="@Model.Id" />
+                <input type="hidden" id="ProductPrice" value="@Model.ProductPrice" />
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>نام محصول</label>
+                            <input type="text" class="form-control" value="@Model.ProductName" readonly />
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>قیمت اصلی</label>
+                            <input type="text" class="form-control text-danger font-weight-bold"
+                                   value="@Model.ProductPrice.ToString("N0") تومان" readonly />
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="my-3" />
+
+                    <div class="form-group">
+                        <label class="d-block mb-2">نوع تخفیف</label>
+
+                        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                            <label class="btn btn-outline-primary active">
+                                <input type="radio" name="discountType" id="discountTypeAmount" value="amount" autocomplete="off" checked> مبلغی
+                            </label>
+                            <label class="btn btn-outline-primary">
+                                <input type="radio" name="discountType" id="discountTypePercentage" value="percentage" autocomplete="off"> درصدی
+                            </label>
+                        </div>
+                    </div>
+
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <div class="form-group" id="amountDiscountGroup">
+                            <label>مبلغ تخفیف</label>
+                            <input type="number" class="form-control" id="AmountDiscount" min="0" step="1"
+                                   value="@(Model.AmountDiscount.HasValue? Model.AmountDiscount.Value.ToString() : "")"
+                                   placeholder="مثلاً 50000" />
+                            <small class="text-muted">مبلغ نباید از قیمت اصلی بیشتر باشد.</small>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group" id="percentageDiscountGroup">
+                            <label>درصد تخفیف</label>
+                            <input type="number" class="form-control" id="PercentageDiscount" min="0" max="100" step="1"
+                                   value="@(Model.PercentageDiscount.HasValue? Model.PercentageDiscount.Value.ToString() : "")"
+                                   placeholder="مثلاً 20" />
+                            <small class="text-muted">درصد باید بین 0 تا 100 باشد.</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>تاریخ پایان</label>
+                    <input type="datetime-local" class="form-control" id="EndTimeLocal"
+                           value="@Model.EndTime.ToLocalTime().ToString("yyyy-MM-ddTHH:mm")" />
+                    <small class="text-muted">زمان در سمت سرور به UTC ارسال می‌شود.</small>
+                </div>
+
+                <div class="alert alert-info mb-0">
+                    <small>
+                        فقط یکی از دو حالت <strong>مبلغی</strong> یا <strong>درصدی</strong> را وارد کنید.
+                    </small>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-dismiss="modal">انصراف</button>
+                <button type="button" class="btn btn-primary" onclick="updateDiscount()">ذخیره تغییرات</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+}
+

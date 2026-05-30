@@ -1,0 +1,91 @@
+﻿<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>خطا در پرداخت</title>
+    <style>
+        @font-face {
+            font-family: 'Yekan';
+            src: url('/sitetamplate/fonts/yekan/Yekan.eot');
+            src: url('/sitetamplate/fonts/yekan/Yekan.eot?#iefix') format('embedded-opentype'), url('/sitetamplate/fonts/yekan/Yekan.woff2') format('woff2'), url('/sitetamplate/fonts/yekan/Yekan.woff') format('woff'), url('/sitetamplate/fonts/yekan/Yekan.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        body {
+            font-family: 'Yekan', sans-serif;
+            background-color: #fff5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .card {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(231, 76, 60, 0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .icon-circle {
+            width: 80px;
+            height: 80px;
+            background: #e74c3c;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 20px;
+            font-size: 40px;
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        h2 {
+            color: #e74c3c;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        .btn-retry {
+            display: inline-block;
+            background: #e74c3c;
+            color: white;
+            text-decoration: none;
+            padding: 12px 30px;
+            border-radius: 10px;
+            transition: 0.3s;
+        }
+
+            .btn-retry:hover {
+                background: #c0392b;
+            }
+
+        .support-text {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="icon-circle">✕</div>
+        <h2>پرداخت انجام نشد</h2>
+        <p>متأسفانه در طول فرآیند پرداخت خطایی رخ داده است. مبلغی از حساب شما کسر نشد.</p>
+        <a href="index.html" class="btn-retry">تلاش مجدد</a>
+        <p class="support-text">در صورت کسر وجه، مبلغ تا ۷۲ ساعت آینده به حساب شما بازمی‌گردد.</p>
+    </div>
+</body>
+</html>
