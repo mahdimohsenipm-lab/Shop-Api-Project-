@@ -29,7 +29,6 @@ The admin panel is built with Razor Pages and uses cookie authentication.
 - Entities
 - Services
 - StoreTest
-- ViewModel
 - WebFramework
 
 
