@@ -33,11 +33,7 @@ The admin panel is built with Razor Pages and uses cookie authentication.
 - WebFramework
 
 
-## How to Run
-1. Clone the repository
-2. Restore NuGet packages
-3. Update the connection string
-4. Run the project
+
 
 ## License
 This project is for educational purposes.
