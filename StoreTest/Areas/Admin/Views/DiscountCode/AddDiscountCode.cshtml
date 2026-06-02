@@ -1,0 +1,286 @@
+﻿@{
+    ViewData["Title"] = "AddDiscountCode";
+    Layout = "~/Areas/Admin/Views/Shared/AdminLayout.cshtml";
+}
+
+
+
+<div class="container mt-5">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">افزودن کد تخفیف جدید</h4>
+        </div>
+        <div class="card-body">
+            <div id="alertMessage" class="alert alert-dismissible fade" role="alert">
+                <span id="alertMessageText"></span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <form id="discountForm" method="post">
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        <label asp-for="Code">کد تخفیف</label>
+                        <input asp-for="Code" id="code" name="Code" class="form-control" placeholder="مثال: OFF100" />
+                        <span id="codeError" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label asp-for="Count">تعداد</label>
+                        <input asp-for="Count" id="count" name="Count" class="form-control" type="number" />
+                        <span id="countError" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        <label asp-for="Amount">مبلغ تخفیف (تومان)</label>
+                        <input asp-for="Amount" id="amount" name="Amount" class="form-control" type="number" placeholder="مبلغ ثابت" />
+                        <span id="amountError" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label asp-for="Persentage">درصد تخفیف</label>
+                        <input asp-for="Persentage" id="persentage" name="Persentage" class="form-control" type="number" placeholder="مثال: 20" />
+                        <span id="persentageError" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="LimitPrice">حداقل مبلغ خرید (محدودیت)</label>
+                    <input asp-for="LimitPrice" id="limitPrice" name="LimitPrice" class="form-control" type="number" />
+                    <span id="limitPriceError" class="text-danger"></span>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 form-group">
+                        <label asp-for="StartTime">زمان شروع</label>
+                        <input asp-for="StartTime" id="startTime" name="StartTime" class="form-control" type="datetime-local" />
+                        <span id="startTimeError" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 form-group">
+                        <label asp-for="EndTime">زمان پایان</label>
+                        <input asp-for="EndTime" id="endTime" name="EndTime" class="form-control" type="datetime-local" />
+                        <span id="endTimeError" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <button type="submit" id="submitBtn" class="btn btn-primary btn-block mt-3">افزودن کد تخفیف</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <link href="~/Sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+    <script src="~/Sweetalert2/sweetalert2.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // ... (کدهای قبلی برای clearErrors, clearFieldError, displayFieldError, showAlert)
+
+            // نمایش پیام خطا با SweetAlert2
+            function showSweetAlertError(title, message, confirmButtonText = "متوجه شدم") {
+                Swal.fire({
+                    icon: "error",
+                    title: title || "خطا",
+                    text: message,
+                    confirmButtonText: confirmButtonText
+                });
+            }
+
+            // اعتبارسنجی فیلدها
+            function validateForm() {
+                clearErrors(); // پاک کردن خطاها قبل از اعتبارسنجی مجدد
+                let isValid = true;
+
+                const code = $('#code').val().trim();
+                const count = $('#count').val();
+                const amountInput = $('#amount');
+                const persentageInput = $('#persentage');
+                const amount = amountInput.val();
+                const persentage = persentageInput.val();
+                const limitPrice = $('#limitPrice').val();
+                const startTime = $('#startTime').val();
+                const endTime = $('#endTime').val();
+                const userName = $('#userName').val().trim(); // فرض می کنیم فیلد UserName با ID 'userName' وجود دارد
+
+                // --- اضافه شدن اعتبارسنجی UserName ---
+                // Regex برای حروف انگلیسی و اعداد
+                const userNameRegex = /^[a-zA-Z0-9]+$/;
+                if (!userName) {
+                    // اگر میخواهید خطای UserName هم در کنار فیلد نمایش داده شود، از displayFieldError استفاده کنید
+                    // displayFieldError('userName', 'نام کاربری الزامی است.');
+                    // isValid = false;
+
+                    // اگر میخواهید از SweetAlert استفاده کنید:
+                    showSweetAlertError("خطا در نام کاربری", "نام کاربری الزامی است.");
+                    isValid = false; // فرم نامعتبر است
+                } else if (!userNameRegex.test(userName)) {
+                    // اگر میخواهید خطای UserName هم در کنار فیلد نمایش داده شود، از displayFieldError استفاده کنید
+                    // displayFieldError('userName', 'نام کاربری باید فقط شامل حروف انگلیسی و اعداد باشد.');
+                    // isValid = false;
+
+                    // استفاده از SweetAlert برای نمایش خطا
+                    showSweetAlertError("نامعتبر", "نام کاربری باید فقط شامل حروف انگلیسی و اعداد باشد");
+                    isValid = false; // فرم نامعتبر است
+                }
+                // --- پایان اعتبارسنجی UserName ---
+
+                // Code Validation (اگر کد قبلی برای Code معتبر بود، باقی می ماند)
+                if (!code) {
+                    displayFieldError('code', 'کد تخفیف الزامی است.');
+                    isValid = false;
+                }
+
+                // Count Validation
+                if (!count || parseInt(count) <= 0) {
+                    displayFieldError('count', 'تعداد باید عددی مثبت باشد.');
+                    isValid = false;
+                }
+
+                // Amount and Percentage Logic (این بخش بدون تغییر باقی می ماند)
+                const amountValue = amount ? parseInt(amount) : null;
+                const percentageValue = persentage ? parseInt(persentage) : null;
+                const isAmountFilled = amount.trim() !== "";
+                const isPercentageFilled = persentage.trim() !== "";
+
+                if (isAmountFilled && isPercentageFilled) {
+                    displayFieldError('amount', 'فقط یکی از مبلغ یا درصد را پر کنید.');
+                    displayFieldError('persentage', 'فقط یکی از مبلغ یا درصد را پر کنید.');
+                    isValid = false;
+                } else if (!isAmountFilled && !isPercentageFilled) {
+                    displayFieldError('amount', 'حداقل یکی از مبلغ یا درصد را وارد کنید.');
+                    displayFieldError('persentage', 'حداقل یکی از مبلغ یا درصد را وارد کنید.');
+                    isValid = false;
+                } else {
+                    if (isAmountFilled && (amountValue <= 0)) {
+                        displayFieldError('amount', 'مبلغ تخفیف باید مثبت باشد.');
+                        isValid = false;
+                    }
+                    if (isPercentageFilled && (percentageValue <= 0 || percentageValue > 100)) {
+                        displayFieldError('persentage', 'درصد تخفیف باید بین ۱ تا ۱۰۰ باشد.');
+                        isValid = false;
+                    }
+                }
+
+                // LimitPrice Validation
+                if (limitPrice && parseInt(limitPrice) < 0) {
+                    displayFieldError('limitPrice', 'حداقل مبلغ خرید نمی‌تواند منفی باشد.');
+                    isValid = false;
+                }
+
+                // StartTime Validation
+                if (!startTime) {
+                    displayFieldError('startTime', 'زمان شروع الزامی است.');
+                    isValid = false;
+                }
+
+                // EndTime Validation
+                if (!endTime) {
+                    displayFieldError('endTime', 'زمان پایان الزامی است.');
+                    isValid = false;
+                }
+
+                // Compare Start and End Times
+                if (startTime && endTime && new Date(startTime) >= new Date(endTime)) {
+                    displayFieldError('endTime', 'زمان پایان باید بعد از زمان شروع باشد.');
+                    isValid = false;
+                }
+
+                return isValid;
+            }
+
+            // Event Listener برای دکمه Submit
+            $('#discountForm').on('submit', function(event) {
+                event.preventDefault(); // جلوگیری از ارسال عادی فرم
+
+                if (validateForm()) {
+                    $('#submitBtn').prop('disabled', true).text('در حال ارسال...'); // غیرفعال کردن دکمه و تغییر متن
+
+                    const formData = $(this).serialize(); // گرفتن تمام داده های فرم به صورت رشته ای
+
+                    // آدرس URL کنترلر خود را اینجا قرار دهید
+                    const submitUrl = '@Url.Action("AddDiscountCode", "DiscountCode")';
+
+                    $.ajax({
+                        url: submitUrl,
+                        type: 'POST',
+                        data: formData,
+                        dataType: 'json', // انتظار پاسخ JSON از سرور
+                        success: function(response) {
+                            if (response.success) {
+                                showAlert(response.message, 'success');
+                                $('#discountForm')[0].reset(); // پاک کردن فرم پس از موفقیت
+                                $('#amount').prop('disabled', false);
+                                $('#persentage').prop('disabled', false);
+                            } else {
+                                if (response.errors) {
+                                    for (const key in response.errors) {
+                                        const fieldId = key.toLowerCase();
+                                        if ($('#' + fieldId + 'Error').length) {
+                                             displayFieldError(fieldId, response.errors[key]);
+                                        }
+                                    }
+                                } else {
+                                    // اگر خطای کلی از سرور آمد و مربوط به فیلد خاصی نبود
+                                    showAlert(response.message || 'خطایی در ثبت اطلاعات رخ داد.', 'danger');
+                                }
+                            }
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            // خطاهای مربوط به ارتباط AJAX
+                            showAlert('خطا در ارتباط با سرور: ' + errorThrown, 'danger');
+                            console.error("AJAX Error: ", textStatus, errorThrown, jqXHR);
+                        },
+                        complete: function() {
+                            $('#submitBtn').prop('disabled', false).text('افزودن کد تخفیف'); // فعال کردن مجدد دکمه
+                        }
+                    });
+                }
+            });
+
+            // ... (بقیه Event Listener ها برای input و focus)
+
+            // Event listener ها برای فعال/غیرفعال کردن خودکار و پاک کردن خطاها
+            $('#amount').on('input change', function() {
+                if ($(this).val().trim() !== "") {
+                    $('#persentage').prop('disabled', true);
+                    clearFieldError('persentage');
+                } else {
+                    $('#persentage').prop('disabled', false);
+                }
+                clearFieldError('amount');
+            });
+
+            $('#persentage').on('input change', function() {
+                if ($(this).val().trim() !== "") {
+                    $('#amount').prop('disabled', true);
+                    clearFieldError('amount');
+                } else {
+                    $('#amount').prop('disabled', false);
+                }
+                clearFieldError('persentage');
+            });
+
+            $('#code, #count, #limitPrice, #startTime, #endTime').on('input change', function() {
+                const fieldId = $(this).attr('id');
+                clearFieldError(fieldId);
+                if (fieldId === 'startTime' || fieldId === 'endTime') {
+                    clearFieldError('endTime');
+                }
+            });
+
+            $('#discountForm input').on('focus', function() {
+                clearFieldError($(this).attr('id'));
+            });
+
+            // مقداردهی اولیه وضعیت فیلدهای مبلغ و درصد
+            if ($('#amount').val().trim() !== "") {
+                $('#persentage').prop('disabled', true);
+            }
+            if ($('#persentage').val().trim() !== "") {
+                $('#amount').prop('disabled', true);
+            }
+        });
+    </script>
+}
+
