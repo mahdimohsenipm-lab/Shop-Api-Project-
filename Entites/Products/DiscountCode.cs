@@ -11,6 +11,8 @@ namespace Entites.Products
     {
         public int Count { get; set; }
 
+        public int LimitPrice { get; set; }
+
         public int? Amount { get; set; }
 
         public int? Percentage { get; set; }
@@ -19,9 +21,9 @@ namespace Entites.Products
 
         public DateTimeOffset EndTime { get; set; }
 
-        public virtual Product Product { get; set; }
+        public string Code { get; set; }
 
-        public int ProductId { get; set; }
+
 
     }
 }
