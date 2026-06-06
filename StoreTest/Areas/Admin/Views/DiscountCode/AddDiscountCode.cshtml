@@ -3,5 +3,181 @@
     Layout = "~/Areas/Admin/Views/Shared/AdminLayout.cshtml";
 }
 
+<div class="container mt-5">
+    <h1 class="mb-4 text-center">اضافه کردن کد تخفیف</h1>
+    <form id="razorForm" class="p-4 shadow-sm border rounded bg-light">
+
+        <!-- ردیف اول: کد و حداقل خرید -->
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="code">کد</label>
+                <input type="text" class="form-control" id="code" name="code" required>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="limitPrice">حداقل خرید</label>
+                <input type="number" class="form-control" id="limitPrice" name="limitPrice">
+            </div>
+        </div>
+
+        <!-- ردیف دوم: تعداد و نوع قیمت (رادیوبات) -->
+        <div class="form-row align-items-end">
+            <div class="form-group col-md-6">
+                <label for="count">تعداد (Count)</label>
+                <input type="number" class="form-control" id="count" name="count" required>
+            </div>
+            <div class="form-group col-md-6">
+                <div class="d-flex align-items-center" style="height: 38px;">
+                    <!-- تراز کردن با ارتفاع اینپوت‌ها -->
+                    <div class="form-check form-check-inline mb-0">
+                        <input class="form-check-input" type="radio" name="priceType" id="priceRadio" value="price" checked>
+                        <label class="form-check-label" for="priceRadio">
+                            قیمت (LimitPrice)
+                        </label>
+                    </div>
+                    <div class="form-check form-check-inline mb-0">
+                        <input class="form-check-input" type="radio" name="priceType" id="percentageRadio" value="percentage">
+                        <label class="form-check-label" for="percentageRadio">
+                            درصد (Percentage)
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ردیف سوم: قیمت و درصد -->
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="amount">قیمت</label>
+                <input type="number" class="form-control" id="amount" name="amount">
+            </div>
+            <div class="form-group col-md-6">
+                <label for="percentage">درصد</label>
+                <input type="number" class="form-control" id="percentage" name="percentage" disabled>
+            </div>
+        </div>
+
+        <!-- ردیف چهارم: زمان شروع و پایان -->
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="startTime">زمان شروع</label>
+                <input type="datetime-local" class="form-control" id="startTime" name="startTime" required>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="endTime">زمان پایان</label>
+                <input type="datetime-local" class="form-control" id="endTime" name="endTime" required>
+            </div>
+        </div>
+
+        <!-- دکمه ثبت -->
+        <div class="form-group mt-3">
+            <button type="submit" class="btn btn-primary btn-block">ثبت</button>
+        </div>
+    </form>
+</div>
 
 
+
+
+                
+@section Scripts
+{
+    <link href="~/Sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+    <script src="~/Sweetalert2/sweetalert2.min.js"></script>
+    <script>
+           $(document).ready(function () {
+
+            // ۱. مدیریت فعال/غیرفعال کردن فیلدها بر اساس رادیو باتن
+                  function toggleFields() {
+            const selectedType = $('input[name="priceType"]:checked').val();
+            if (selectedType === 'price') {
+                $('#amount').prop('disabled', false); // تغییر به limitPrice
+                $('#percentage').prop('disabled', true).val(''); // پاک کردن مقدار
+            } else {
+                $('#percentage').prop('disabled', false);
+                $('#amount').prop('disabled', true).val(''); // تغییر به limitPrice
+            }
+        }
+
+            // اجرای اولیه و در صورت تغییر رادیو باتن
+            toggleFields();
+            $('input[name="priceType"]').on('change', toggleFields);
+
+            // ۲. ارسال فرم
+            $("#razorForm").on("submit", function (e) {
+                e.preventDefault();
+
+                // پاک کردن خطاهای قبلی
+                $(".error-message").remove();
+                $(".is-invalid").removeClass("is-invalid");
+
+                const code = $("#code").val().trim();
+                const amount = $("#amount").val().trim();
+                const percentage = $("#percentage").val().trim();
+                const priceType = $('input[name="priceType"]:checked').val();
+                const limitPrice = $("#limitPrice").val().trim();
+
+
+                let isValid = true;
+
+                // اعتبارسنجی کد
+                if (code === "") {
+                    showError($("#code"), "کد الزامی است.");
+                    isValid = false;
+                }
+
+                // اعتبارسنجی مقادیر (با توجه به نوع انتخاب شده)
+                if (priceType === 'price' && amount === "") {
+                    showError($("#amount"), "لطفاً مبلغ را وارد کنید.");
+                    isValid = false;
+                } else if (priceType === 'percentage' && percentage === "") {
+                    showError($("#percentage"), "لطفاً درصد را وارد کنید.");
+                    isValid = false;
+                }
+
+                if (!isValid) return;
+
+                // ۳. ساخت آبجکت نهایی
+                const formData = {
+                    code: code,
+                    amount: amount === "" ? 0 : amount,
+                    percentage: percentage === "" ? 0 : percentage,
+                    limitPrice:limitPrice,
+                    count: $("#count").val(),
+                    startTime: $("#startTime").val(),
+                    endTime: $("#endTime").val()
+                };
+
+                // ۴. ارسال AJAX
+                $.ajax({
+                    url: "/Admin/DiscountCode/AddDiscountCode",
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify(formData),
+                    beforeSend: function () {
+                        $("#submitBtn").prop("disabled", true).text("در حال ارسال...");
+                    },
+                    success: function (response) {
+                        alert("عملیات با موفقیت انجام شد.");
+                        // در صورت نیاز صفحه را رفرش کنید یا فرم را ریست کنید
+                    },
+                    error: function (xhr) {
+                        alert("خطا در ارسال اطلاعات.");
+                        console.error(xhr.responseText);
+                    },
+                    complete: function () {
+                        $("#submitBtn").prop("disabled", false).text("ارسال");
+                    }
+                });
+            });
+
+            // تابع کمکی برای نمایش خطا
+            function showError(element, message) {
+                element.addClass("is-invalid");
+                // قرار دادن پیام خطا بعد از فیلد
+                element.after('<div class="error-message text-danger small">' + message + '</div>');
+            }
+        });
+
+
+    </script>
+}
