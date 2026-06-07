@@ -2,15 +2,15 @@
 using Data.Contracts;
 using Entites.Products;
 
-namespace Services.DiscountCodeService
+namespace Services.DiscountCodeService.Area.AddDiscountCode
 {
-    public class DiscountCodeService : IDiscountCodeService
+    public class AddDiscountCodeService : IAddDiscountCodeService
     {
 
         private readonly IRepository<DiscountCode> _repository;
         private readonly IMapper mapper;
 
-        public DiscountCodeService(IRepository<DiscountCode> repository,IMapper mapper)
+        public AddDiscountCodeService(IRepository<DiscountCode> repository,IMapper mapper)
         {
             _repository = repository;
             this.mapper = mapper;

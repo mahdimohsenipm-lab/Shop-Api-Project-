@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Services.DiscountCodeService;
+using Services.DiscountCodeService.Area.AddDiscountCode;
 using System.Threading.Tasks;
 using WebFramework.Filter;
 
@@ -11,9 +11,9 @@ namespace StoreTest.Areas.Admin.Controllers
     [Authorize(Roles = "Admin")]
     public class DiscountCodeController : Controller
     {
-        private readonly IDiscountCodeService _discountCodeService;
+        private readonly IAddDiscountCodeService _discountCodeService;
 
-        public DiscountCodeController(IDiscountCodeService discountCodeService)
+        public DiscountCodeController(IAddDiscountCodeService discountCodeService)
         {
             _discountCodeService = discountCodeService;
         }

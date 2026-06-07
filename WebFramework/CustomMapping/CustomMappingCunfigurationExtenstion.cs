@@ -3,7 +3,7 @@ using Entites.Orders;
 using Entites.Products;
 using Entites.Users;
 using Microsoft.Extensions.DependencyInjection;
-using Services.DiscountCodeService;
+using Services.DiscountCodeService.Area.AddDiscountCode;
 using Services.ProductsServices.Commands.AddProduct;
 using Services.ProductsServices.Querys.GetProductDetail;
 using Services.ProductsServices.Querys.GetProductDetailSite;
@@ -56,7 +56,14 @@ namespace WebFramework.CustomMapping
             services.CreateMap<ProductFiture, ProductFitureDto>().ReverseMap();
             services.CreateMap<ProductImage, ProductImageDto>().ReverseMap();
             services.CreateMap<DiscountCode, RequestAddDiscountCode>().ReverseMap();
+            services.CreateMap<DiscountCode, DiscountCodeDto>().ReverseMap();
 
+
+
+
+           services.CreateMap<DiscountCode, DiscountCodeDto>()
+           .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src =>
+               src.Count > 0 || (src.StartTime < DateTime.Now && DateTime.Now < src.EndTime)));
 
 
 

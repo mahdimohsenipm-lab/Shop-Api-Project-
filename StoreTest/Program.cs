@@ -22,7 +22,7 @@ namespace StoreTest
             {
                 options.LoginPath = "/Admin/Authentication/Login";
                 options.AccessDeniedPath = "/Admin/Authentication/AccessDenied";
-                options.ExpireTimeSpan = TimeSpan.FromHours(2);
+                options.ExpireTimeSpan = TimeSpan.FromHours(8);
                 options.SlidingExpiration = true;
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;

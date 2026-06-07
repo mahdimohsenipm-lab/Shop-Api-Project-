@@ -9,14 +9,13 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
-using Microsoft.CodeAnalysis.Options;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Services.CategoryService.Area.GetProductByCatId;
 using Services.CategoryService.Site.GetCategoryForSite;
-using Services.DiscountCodeService;
+using Services.DiscountCodeService.Area.AddDiscountCode;
 using Services.DiscountService.Area.AddDiscountService;
 using Services.DiscountService.Area.GetDiscountDetail;
 using Services.DiscountService.Area.GetDiscountService;
@@ -36,15 +35,10 @@ using Services.ProductsServices.Commands.UpdateProduct;
 using Services.ProductsServices.Querys.GetProductDetail;
 using Services.ProductsServices.Querys.GetProductDetailSite;
 using Services.ProductsServices.Querys.GetProductSite;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 using WebFramework.Api;
-using WebFramework.Filter;
 using ZarinPal.Pay.IService;
 using ZarinPal.Pay.Service;
 
@@ -78,9 +72,9 @@ namespace WebFramework.Configuration
            services.AddScoped<IGetProductDetailSiteService, GetProductDetailSiteService>();
            services.AddScoped<IAddDiscountService, AddDiscountService>();
            services.AddScoped<IGetDiscountDetailService, GetDiscountDetailService>();
-            services.AddScoped<IUpdateDiscountService, UpdateDiscountService>();
-            services.AddScoped<IGetDiscountService, GetDiscountService>();
-            services.AddScoped<IDiscountCodeService, DiscountCodeService>();
+           services.AddScoped<IUpdateDiscountService, UpdateDiscountService>();
+           services.AddScoped<IGetDiscountService, GetDiscountService>();
+           services.AddScoped<IAddDiscountCodeService, AddDiscountCodeService>();
 
 
 

@@ -1,13 +1,12 @@
-﻿using Entites.Common;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Entites.Products
+namespace Services.ViewModel.Area.Model.Dto
 {
-    public class DiscountCode:BaseEntity
+    public class DiscountCodeDto
     {
         public int Count { get; set; }
 
@@ -17,15 +16,9 @@ namespace Entites.Products
 
         public int? Percentage { get; set; }
 
-        public DateTimeOffset StartTime { get; set; }
-
-        public DateTimeOffset EndTime { get; set; }
-
         public string Code { get; set; }
 
         public bool IsActive { get; set; }
-
-
 
     }
 }

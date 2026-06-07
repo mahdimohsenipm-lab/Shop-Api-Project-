@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Services.DiscountCodeService
+namespace Services.DiscountCodeService.Area.AddDiscountCode
 {
-    public interface IDiscountCodeService
+    public interface IAddDiscountCodeService
     {
         Task Execute(RequestAddDiscountCode requestAdd,CancellationToken cancellationToken);
     }

@@ -1,4 +1,4 @@
-﻿namespace Services.DiscountCodeService
+﻿namespace Services.DiscountCodeService.Area.AddDiscountCode
 {
     public class RequestAddDiscountCode
     {
