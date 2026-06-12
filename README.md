@@ -1,4 +1,4 @@
-# Shop-Api-CleanArchitecture
+# Shop-Api-ASP.NET
 
 E-commerce API project built with ASP.NET Core and Clean Architecture.
 
