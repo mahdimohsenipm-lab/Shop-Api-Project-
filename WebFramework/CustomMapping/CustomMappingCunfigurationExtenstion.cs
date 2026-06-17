@@ -60,10 +60,18 @@ namespace WebFramework.CustomMapping
 
 
 
+            //services.CreateMap<DiscountCode, DiscountCodeDto>()
+            //    .ForMember(dest => dest.LeftTime,
+            //        opt => opt.MapFrom(src => src.EndTime))
+            //    .ForMember(dest => dest.IsExpired,
+            //        opt => opt.MapFrom(src => src.EndTime <= DateTimeOffset.Now));
 
-           services.CreateMap<DiscountCode, DiscountCodeDto>()
-           .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src =>
-               src.Count > 0 || (src.StartTime < DateTime.Now && DateTime.Now < src.EndTime)));
+            var now = DateTimeOffset.Now;
+            services.CreateMap<DiscountCode, DiscountCodeDto>().ForMember(d => d.IsActive,
+    opt => opt.MapFrom(s =>
+        s.Count > 0 &&
+        s.StartTime <= now &&
+        s.EndTime >= now));
 
 
 

@@ -1,10 +1,8 @@
 using Common;
 using Entites.Users;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using NLog;
 using NLog.Web;
-using System.Threading.Tasks;
 using WebFramework.Configuration;
 using WebFramework.CustomMapping;
 using WebFramework.Middleware;

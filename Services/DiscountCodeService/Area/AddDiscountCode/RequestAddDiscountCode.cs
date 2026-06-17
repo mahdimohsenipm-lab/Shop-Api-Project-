@@ -9,6 +9,8 @@
         public string Code { get; set; }
 
         public int LimitPrice { get; set; }
+
+        public bool IsActive { get; set; } = true;
         public int? Persentage { get; set; }
 
         public DateTimeOffset StartTime { get; set; }

@@ -16,6 +16,7 @@ using Microsoft.IdentityModel.Tokens;
 using Services.CategoryService.Area.GetProductByCatId;
 using Services.CategoryService.Site.GetCategoryForSite;
 using Services.DiscountCodeService.Area.AddDiscountCode;
+using Services.DiscountCodeService.Area.GetDiscountCode;
 using Services.DiscountService.Area.AddDiscountService;
 using Services.DiscountService.Area.GetDiscountDetail;
 using Services.DiscountService.Area.GetDiscountService;
@@ -75,6 +76,8 @@ namespace WebFramework.Configuration
            services.AddScoped<IUpdateDiscountService, UpdateDiscountService>();
            services.AddScoped<IGetDiscountService, GetDiscountService>();
            services.AddScoped<IAddDiscountCodeService, AddDiscountCodeService>();
+            services.AddScoped<IGetDiscountCodeService, GetDiscountCodeService>();
+
 
 
 

@@ -15,7 +15,7 @@
             </div>
             <div class="form-group col-md-6">
                 <label for="limitPrice">حداقل خرید</label>
-                <input type="number" class="form-control" id="limitPrice" name="limitPrice">
+                <input type="number" class="form-control" id="limitPrice" name="limitPrice" required>
             </div>
         </div>
 
@@ -83,27 +83,34 @@
 {
     <link href="~/Sweetalert2/sweetalert2.min.css" rel="stylesheet" />
     <script src="~/Sweetalert2/sweetalert2.min.js"></script>
+
     <script>
-           $(document).ready(function () {
+        $(document).ready(function () {
 
-            // ۱. مدیریت فعال/غیرفعال کردن فیلدها بر اساس رادیو باتن
-                  function toggleFields() {
-            const selectedType = $('input[name="priceType"]:checked').val();
-            if (selectedType === 'price') {
-                $('#amount').prop('disabled', false); // تغییر به limitPrice
-                $('#percentage').prop('disabled', true).val(''); // پاک کردن مقدار
-            } else {
-                $('#percentage').prop('disabled', false);
-                $('#amount').prop('disabled', true).val(''); // تغییر به limitPrice
+            // فعال/غیرفعال کردن فیلدها
+            function toggleFields() {
+
+                const selectedType = $('input[name="priceType"]:checked').val();
+
+                if (selectedType === 'price') {
+                    $('#amount').prop('disabled', false);
+                    $('#percentage').prop('disabled', true).val('');
+                }
+                else {
+                    $('#percentage').prop('disabled', false);
+                    $('#amount').prop('disabled', true).val('');
+                }
             }
-        }
 
-            // اجرای اولیه و در صورت تغییر رادیو باتن
+            // اجرای اولیه
             toggleFields();
+
+            // تغییر رادیوباتن
             $('input[name="priceType"]').on('change', toggleFields);
 
-            // ۲. ارسال فرم
+            // ارسال فرم
             $("#razorForm").on("submit", function (e) {
+
                 e.preventDefault();
 
                 // پاک کردن خطاهای قبلی
@@ -116,7 +123,6 @@
                 const priceType = $('input[name="priceType"]:checked').val();
                 const limitPrice = $("#limitPrice").val().trim();
 
-
                 let isValid = true;
 
                 // اعتبارسنجی کد
@@ -125,59 +131,123 @@
                     isValid = false;
                 }
 
-                // اعتبارسنجی مقادیر (با توجه به نوع انتخاب شده)
+                // اعتبارسنجی مبلغ یا درصد
                 if (priceType === 'price' && amount === "") {
                     showError($("#amount"), "لطفاً مبلغ را وارد کنید.");
                     isValid = false;
-                } else if (priceType === 'percentage' && percentage === "") {
+                }
+                else if (priceType === 'percentage' && percentage === "") {
                     showError($("#percentage"), "لطفاً درصد را وارد کنید.");
                     isValid = false;
                 }
 
-                if (!isValid) return;
+                        const startTime = $("#startTime").val();
+        const endTime = $("#endTime").val();
 
-                // ۳. ساخت آبجکت نهایی
+        if (startTime && endTime) {
+
+            const startDate = new Date(startTime);
+            const endDate = new Date(endTime);
+
+            if (endDate <= startDate) {
+                showError($("#endTime"), "تاریخ پایان باید بعد از تاریخ شروع باشد.");
+                isValid = false;
+            }
+        }
+
+                if (priceType === 'price' && amount !== "" && limitPrice !== "") {
+
+            const amountValue = parseInt(amount);
+            const limitPriceValue = parseInt(limitPrice);
+
+            if (amountValue >= limitPriceValue) {
+                showError($("#amount"), "مبلغ تخفیف باید کمتر از حداکثر قیمت باشد.");
+                isValid = false;
+            }
+        }
+
+                if (priceType === 'percentage' && percentage !== "") {
+
+            const percentageValue = parseInt(percentage);
+
+            if (percentageValue <= 0 || percentageValue > 100) {
+                showError($("#percentage"), "درصد تخفیف باید بین 1 تا 100 باشد.");
+                isValid = false;
+            }
+        }
+
+                if (!isValid)
+                    return;
+
+                // ساخت آبجکت نهایی
                 const formData = {
                     code: code,
                     amount: amount === "" ? 0 : amount,
                     percentage: percentage === "" ? 0 : percentage,
-                    limitPrice:limitPrice,
+                    limitPrice: limitPrice,
                     count: $("#count").val(),
                     startTime: $("#startTime").val(),
                     endTime: $("#endTime").val()
                 };
 
-                // ۴. ارسال AJAX
+                // ارسال Ajax
                 $.ajax({
                     url: "/Admin/DiscountCode/AddDiscountCode",
                     type: "POST",
                     contentType: "application/json",
                     data: JSON.stringify(formData),
+
                     beforeSend: function () {
-                        $("#submitBtn").prop("disabled", true).text("در حال ارسال...");
+                        $("#submitBtn")
+                            .prop("disabled", true)
+                            .text("در حال ارسال...");
                     },
+
                     success: function (response) {
-                        alert("عملیات با موفقیت انجام شد.");
-                        // در صورت نیاز صفحه را رفرش کنید یا فرم را ریست کنید
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'عملیات موفق',
+                            text: 'کد تخفیف با موفقیت ثبت شد.',
+                            confirmButtonText: 'تایید'
+                        }).then(function (isConfirm) {
+                            window.location.href = "/Admin/DiscountCode/index";
+
+                        });
                     },
+
                     error: function (xhr) {
-                        alert("خطا در ارسال اطلاعات.");
-                        console.error(xhr.responseText);
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'خطا',
+                            text: xhr.responseText || 'در ثبت اطلاعات خطایی رخ داده است.',
+                            confirmButtonText: 'بستن'
+                        });
+
+                        console.error(xhr);
                     },
+
                     complete: function () {
-                        $("#submitBtn").prop("disabled", false).text("ارسال");
+                        $("#submitBtn")
+                            .prop("disabled", false)
+                            .text("ارسال");
                     }
                 });
             });
 
-            // تابع کمکی برای نمایش خطا
+            // نمایش خطا زیر فیلد
             function showError(element, message) {
+
                 element.addClass("is-invalid");
-                // قرار دادن پیام خطا بعد از فیلد
-                element.after('<div class="error-message text-danger small">' + message + '</div>');
+
+                element.after(
+                    '<div class="error-message text-danger small">' +
+                    message +
+                    '</div>'
+                );
             }
+
         });
-
-
     </script>
 }

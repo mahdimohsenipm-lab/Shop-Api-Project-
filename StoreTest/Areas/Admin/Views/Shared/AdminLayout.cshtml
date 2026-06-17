@@ -109,11 +109,23 @@
                         <li class="has-sub nav-item">
                             <a><i class="fa fa-map-marker"></i><span data-i18n="" class="menu-title">  تخفیف </span></a>
                             <ul class="menu-content">
+
                                 <li asp-active-controllers="User" asp-active-actions="Create" class="nav-item">
                                     <a href="/Admin/Discount/index" class="menu-item">تخفیف ها </a>
                                 </li>
+
+                                <li asp-active-controllers="User" asp-active-actions="Create" class="nav-item">
+                                    <a href="/Admin/DiscountCode/index" class="menu-item">کد تخفیف ها</a>
+                                </li>
+
+                                <li asp-active-controllers="User" asp-active-actions="Create" class="nav-item">
+                                    <a href="/Admin/DiscountCode/AddDiscountCode" class="menu-item">اضافه کردن کد تخفیف</a>
+                                </li>
                             </ul>
 
+
+
+                   
 
 
                     @*     <li class="has-sub nav-item">

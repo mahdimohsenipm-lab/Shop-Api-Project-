@@ -22,11 +22,10 @@ namespace Services.DiscountCodeService.Area.GetDiscountCode
         }
         public IPagedList<DiscountCodeDto> Execute(int? page)
         {
-            var now = DateTimeOffset.Now;
-            var result = _repository.TableNoTracking.Where(x => x.IsActive == true)
+       
+            var result = _repository.TableNoTracking
                 .ProjectTo<DiscountCodeDto>(_mapper.ConfigurationProvider)
                 .ToPagedList(page??1,5);
-
             return result;
         }
     }
