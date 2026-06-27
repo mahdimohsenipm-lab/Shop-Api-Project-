@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Entites.Products
 {
-    public class DiscountCode:BaseEntity
+    public class DiscountCode : BaseEntity
     {
         public int Count { get; set; }
 
@@ -23,7 +23,7 @@ namespace Entites.Products
 
         public string Code { get; set; }
 
-        public bool IsActive { get; set; }
+        public bool IsActive { get; set; } = true;
 
 
 

@@ -89,34 +89,74 @@ document.addEventListener("DOMContentLoaded", async () => {
         const response = await fetch("https://localhost:7061/api/Products");
         const result = await response.json();
         const products = result.data.products;
+
         const container = document.getElementById("product-list");
+
         if (container) {
             container.innerHTML = products.map(product => `
-    <div class="product-card">
-        <div class="product-image" onclick="showProductDetail(${product.id})" style="cursor: pointer;">
-            <img src="https://localhost:7061/${product.src}" onerror="this.src='placeholder.jpg'" />
-        </div>
-<div class="product-info">
-            <h3 onclick="showProductDetail(${product.id})" style="cursor: pointer;">
-                ${product.name}
-            </h3>
-<p class="price">
-                ${product.price.toLocaleString()} تومان
-            </p>
-            <button onclick="event.stopPropagation(); addToCart(${product.id}, '${product.name.replace(/'/g, "\\'")}', ${product.price})">
-                افزودن به سبد
-            </button>
-        </div>
-    </div>
-`).join('');
+                <div class="product-card">
+                    <div class="product-image"
+                         onclick="showProductDetail(${product.id})"
+                         style="cursor: pointer;">
 
+                        <img src="https://localhost:7061/${product.src}"
+                             onerror="this.src='placeholder.jpg'" />
+                    </div>
+
+                    <div class="product-info">
+
+                        <h3 onclick="showProductDetail(${product.id})"
+                            style="cursor: pointer;">
+                            ${product.name}
+                        </h3>
+
+                ${product.price > product.finalPrice
+                    ? `
+        <div class="price-box">
+            <span class="old-price">
+                ${product.price.toLocaleString()} تومان
+            </span>
+
+            <div class="discount-row">
+                <span class="final-price">
+                    ${product.finalPrice.toLocaleString()} تومان
+                </span>
+
+                <span class="discount-badge">
+                    ${product.percentage != 0
+                        ? `${product.percentage}% تخفیف`
+                        : `${product.amount.toLocaleString()} تومان تخفیف`
+                    }
+                </span>
+            </div>
+        </div>
+    `
+                    : `
+        <p class="price">
+            ${product.price.toLocaleString()} تومان
+        </p>
+    `
+}
+
+                        <button
+                            onclick="event.stopPropagation(); addToCart(${product.id}, '${product.name.replace(/'/g, "\\'")}', ${product.finalPrice})">
+                            افزودن به سبد
+                        </button>
+
+                    </div>
+                </div>
+            `).join('');
         }
+
     } catch (error) {
-        console.error("خطا در دریافت محصولات:", error); 
+        console.error("خطا در دریافت محصولات:", error);
     }
+
     const checkoutBtn = document.getElementById("checkout-btn");
+
     if (checkoutBtn) {
         checkoutBtn.addEventListener("click", goToCheckout);
     }
+
     displayCart();
 });

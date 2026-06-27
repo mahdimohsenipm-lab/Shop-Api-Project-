@@ -12,10 +12,14 @@
 <div class="container-fluid mt-4">
 
     <div class="card shadow-sm">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h4 class="mb-0">لیست کدهای تخفیف</h4>
 
-            <a href="/Admin/DiscountCode/AddDiscountCode" class="btn btn-success">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">
+                لیست کدهای تخفیف
+            </h4>
+
+            <a href="/Admin/DiscountCode/AddDiscountCode"
+               class="btn btn-success">
                 افزودن کد تخفیف
             </a>
         </div>
@@ -24,110 +28,244 @@
 
             <div class="table-responsive">
 
-                <table class="table table-bordered table-hover text-center">
+                <table class="table table-bordered table-hover text-center align-middle">
+
                     <thead class="thead-dark">
-                        <tr>
-                            <th>کد تخفیف</th>
-                            <th>تعداد</th>
-                            <th>سقف خرید</th>
-                            <th>مبلغ تخفیف</th>
-                            <th>پایان زمان کد تخفیف</th>
-                            <th>وضعیت</th>
-                            <th>عملیات</th>
-                        </tr>
+                    <tr>
+                        <th>کد</th>
+                        <th>تعداد</th>
+                        <th>سقف خرید</th>
+                        <th>تخفیف</th>
+                        <th>زمان</th>
+                        <th>وضعیت</th>
+                        <th>باقیمانده</th>
+                        <th>عملیات</th>
+                    </tr>
                     </thead>
 
                     <tbody>
 
-                       @if (Model.Any())
-{
-    @foreach (var item in Model)
-    {
-        <tr>
-            <td>
-                <strong>@item.Code</strong>
-            </td>
-
-            <td>@item.Count</td>
-
-            <td>
-                @item.LimitPrice.ToString("N0") تومان
-            </td>
-
-            <td>
-                @if (item.Amount.HasValue)
-                {
-                    @($"{item.Amount:N0} تومان")
-                }
-                else if (item.Percentage.HasValue)
-                {
-                    @($"{item.Percentage}%")
-                }
-                else
-                {
-                    <span>-</span>
-                }
-            </td>
-
-            <td>
-                @if (item.IsExpired)
-                {
-                    <span class="badge badge-danger">
-                        منقضی شده
-                    </span>
-                }
-                else
-                {
-                    <span>
-                        @item.LeftTime.Days روز
-                        @item.LeftTime.Hours ساعت
-                        @item.LeftTime.Minutes دقیقه
-                    </span>
-                }
-            </td>
-
-            <td>
-                @if (item.IsActive)
-                {
-                    <span class="badge badge-success">
-                        فعال
-                    </span>
-                }
-                else
-                {
-                    <span class="badge badge-danger">
-                        غیرفعال
-                    </span>
-                }
-            </td>
-
-            <td>
-                <a href="#" class="btn btn-warning btn-sm">
-                    ویرایش
-                </a>
-
-                <a onclick="Delete(@item.Id)" class="btn btn-danger btn-sm">
-                    حذف
-                </a>
-            </td>
-        </tr>
-    }
-}
-                        else
+                    @if (Model.Any())
+                    {
+                        foreach (var item in Model)
                         {
-                            <tr>
-                                <td colspan="7">
-                                    هیچ کد تخفیفی یافت نشد
+
+                            var rowClass = "";
+
+                       switch (item.Status)
+{
+    case DiscountCodeStatus.Active:
+        rowClass = "table-success";
+        break;
+
+    case DiscountCodeStatus.NotStarted:
+        rowClass = "table-warning";
+        break;
+
+    case DiscountCodeStatus.Expired:
+        rowClass = "table-danger";
+        break;
+
+    case DiscountCodeStatus.Disabled:
+        rowClass = "table-secondary";
+        break;
+
+    case DiscountCodeStatus.Finished:
+        rowClass = "table-dark";
+        break;
+}
+
+                            <tr class="@rowClass">
+
+                                <td>
+                                    <strong>@item.Code</strong>
                                 </td>
+
+                                <td>
+                                    @item.Count
+                                </td>
+
+                                <td>
+                                    @item.LimitPrice.ToString("N0")
+                                    تومان
+                                </td>
+
+                                <td>
+
+                                    @if (item.Amount.HasValue)
+                                    {
+                                        <span class="badge badge-info">
+                                            @item.Amount.Value.ToString("N0") تومان
+                                        </span>
+                                    }
+                                    else if (item.Percentage.HasValue)
+                                    {
+                                        <span class="badge badge-primary">
+                                            @item.Percentage%
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span>-</span>
+                                    }
+
+                                </td>
+
+                                <td class="text-right">
+
+                                    <small>
+
+                                        <b>شروع:</b>
+
+                                        @item.StartTime.ToString("yyyy/MM/dd HH:mm")
+
+                                        <br />
+
+                                        <b>پایان:</b>
+
+                                        @item.EndTime.ToString("yyyy/MM/dd HH:mm")
+
+                                    </small>
+
+                                </td>
+
+                                <td>
+@switch (item.Status)
+{
+    case DiscountCodeStatus.Active:
+
+        <span class="badge badge-success">
+            @item.StatusText
+        </span>
+
+        break;
+
+    case DiscountCodeStatus.NotStarted:
+
+        <span class="badge badge-warning">
+            @item.StatusText
+        </span>
+
+        break;
+
+    case DiscountCodeStatus.Expired:
+
+        <span class="badge badge-danger">
+            @item.StatusText
+        </span>
+
+        break;
+
+    case DiscountCodeStatus.Disabled:
+
+        <span class="badge badge-secondary">
+            @item.StatusText
+        </span>
+
+        break;
+
+    case DiscountCodeStatus.Finished:
+
+        <span class="badge badge-dark">
+            @item.StatusText
+        </span>
+
+        break;
+}
+
+                                </td>
+
+                              <td>
+
+@if (item.RemainingTime.HasValue)
+{
+    <span class="badge badge-light border">
+
+        @item.RemainingTimeText
+
+        <br />
+
+        @{
+            var time = item.RemainingTime.Value;
+        }
+
+        <small>
+            @time.Days روز
+            @time.Hours ساعت
+            @time.Minutes دقیقه
+        </small>
+
+    </span>
+}
+else
+{
+    <span>-</span>
+}
+
+</td>
+
+                                <td>
+
+                                    <a href="/Admin/DiscountCode/Edit/@item.Id"
+                                       class="btn btn-warning btn-sm">
+                                        ویرایش
+                                    </a>
+
+                                    <button class="btn btn-danger btn-sm"
+                                            onclick="Delete(@item.Id)">
+                                        حذف
+                                    </button>
+
+@if (item.Status == DiscountCodeStatus.Active)
+{
+    <button class="btn btn-outline-danger btn-sm"
+            data-id="@item.Id"
+            onclick="Disable(this)">
+        غیرفعال کردن
+    </button>
+}
+else if (item.Status == DiscountCodeStatus.Finished)
+{
+    <button class="btn btn-outline-primary btn-sm"
+            data-id="@item.Id"
+            onclick="discountCodeModal(this)">
+        شارژ مجدد
+    </button>
+}
+else
+{
+    <button class="btn btn-outline-success btn-sm"
+            data-id="@item.Id"
+            onclick="discountCodeModal(this)">
+        فعال سازی
+    </button>
+}
+
+                                </td>
+
                             </tr>
+
                         }
+                    }
+                    else
+                    {
+                        <tr>
+
+                            <td colspan="8">
+                                هیچ کد تخفیفی یافت نشد.
+                            </td>
+
+                        </tr>
+                    }
 
                     </tbody>
+
                 </table>
 
             </div>
 
         </div>
+
     </div>
 
 </div>
@@ -156,7 +294,7 @@
         </div>
 
 
-                            @section Scripts
+ @section Scripts
 {
 
     <link href="~/Sweetalert2/sweetalert2.min.css" rel="stylesheet" />
@@ -217,5 +355,210 @@
             })
         }
 
+
+
+          function StatusChange(Id) {
+            swal.fire({
+                title: 'تغییر وضعیت کد تخفیف',
+                text: "کاربر گرامی از تغییر وضعیت  مطمئن هستید؟",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#7cacbe',
+                confirmButtonText: 'بله ، تغییر وضعیت انجام شود',
+                cancelButtonText: 'خیر'
+            }).then((result) => {
+                if (result.value) {
+
+                    var postData = {
+                        'Id': Id,
+                    };
+
+                    $.ajax({
+                        contentType: 'application/x-www-form-urlencoded',
+                        dataType: 'json',
+                        type: "POST",
+                        url: "SatusChange",
+                        data: postData,
+                        success: function (data) {
+                            if (data.isSuccess == true) {
+                                swal.fire(
+                                    'موفق!',
+                                    data.message,
+                                    'success'
+                                ).then(function (isConfirm) {
+                                    location.reload();
+                                });
+                            }
+                            else {
+
+                                swal.fire(
+                                    'هشدار!',
+                                    data.message,
+                                    'warning'
+                                );
+
+                            }
+                        },
+                        error: function (request, status, error) {
+                            alert(request.responseText);
+                        }
+
+                    });
+
+                }
+            })
+        }
+
+
+function Activation() {
+
+    const model = {
+        Id: $("#DiscountCodeId").val(),
+        StartTime: $("#StartTime").val(),
+        EndTime: $("#EndTime").val(),
+        Count: $("#Count").val()
+    };
+
+    if (!model.StartTime || !model.EndTime) {
+        Swal.fire({
+            icon: "warning",
+            title: "توجه",
+            text: "زمان شروع و پایان را وارد کنید."
+        });
+        return;
+    }
+
+    if (new Date(model.StartTime) >= new Date(model.EndTime)) {
+        Swal.fire({
+            icon: "warning",
+            title: "توجه",
+            text: "زمان پایان باید بعد از زمان شروع باشد."
+        });
+        return;
+    }
+
+    const count = parseInt(model.Count);
+
+    if (isNaN(count) || count <= 0) {
+        Swal.fire({
+            icon: "warning",
+            title: "توجه",
+            text: "تعداد کدها باید بیشتر از صفر باشد."
+        });
+        return;
+    }
+
+    $.ajax({
+        url: "/Admin/DiscountCode/Activation",
+        type: "POST",
+        data: model,
+
+        beforeSend: function () {
+            $("#btnActivation").prop("disabled", true);
+        },
+
+        success: function (data) {
+
+            if (data.isSuccess) {
+
+                Swal.fire({
+                    icon: "success",
+                    title: "موفق",
+                    text: data.message
+                }).then(() => {
+                    location.reload();
+                });
+
+            } else {
+
+                Swal.fire({
+                    icon: "warning",
+                    title: "هشدار",
+                    text: data.message
+                });
+            }
+        },
+
+        error: function (xhr) {
+
+            Swal.fire({
+                icon: "error",
+                title: "خطا",
+                text: xhr.responseText || "خطایی در ارتباط با سرور رخ داد."
+            });
+        },
+
+        complete: function () {
+            $("#btnActivation").prop("disabled", false);
+        }
+    });
+}
+
+function discountCodeModal(btn) {
+
+    const id = $(btn).data("id");
+
+    $("#DiscountCodeId").val(id);
+
+    $("#discountCodeModal").modal("show");
+}
+
+
+
+modal.show();
+
 </script>
 }
+
+
+@section Modals
+
+{
+
+
+ 
+<div class="modal fade" id="discountCodeModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">فعال سازی مجدد</h5>
+                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+</button>
+            </div>
+
+            <div class="modal-body">
+
+                <div class="mb-3">
+                    <label class="form-label">زمان شروع</label>
+                    <input type="datetime-local" class="form-control" id="StartTime">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">زمان پایان</label>
+                    <input type="datetime-local" class="form-control" id="EndTime">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">تعداد کد تخفیف</label>
+                    <input type="number" class="form-control" id="Count" min="1" value="1">
+                </div>
+
+                <input type="hidden" id="DiscountCodeId" />
+
+            </div>
+
+            <div class="modal-footer">
+               <button type="button" class="btn btn-secondary" data-dismiss="modal">
+    انصراف
+</button>
+                <button class="btn btn-success" onclick="Activation()" >ایجاد</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+}
+    

@@ -15,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Services.CategoryService.Area.GetProductByCatId;
 using Services.CategoryService.Site.GetCategoryForSite;
+using Services.DiscountCodeService.Area.ActivationService;
 using Services.DiscountCodeService.Area.AddDiscountCode;
 using Services.DiscountCodeService.Area.GetDiscountCode;
 using Services.DiscountService.Area.AddDiscountService;
@@ -36,6 +37,8 @@ using Services.ProductsServices.Commands.UpdateProduct;
 using Services.ProductsServices.Querys.GetProductDetail;
 using Services.ProductsServices.Querys.GetProductDetailSite;
 using Services.ProductsServices.Querys.GetProductSite;
+using Services.ProductsServices.Querys.GetProductSite.PriceCalculator;
+using StoreTest.Areas.Admin.Controllers;
 using System.Net;
 using System.Security.Claims;
 using System.Text;
@@ -77,6 +80,15 @@ namespace WebFramework.Configuration
            services.AddScoped<IGetDiscountService, GetDiscountService>();
            services.AddScoped<IAddDiscountCodeService, AddDiscountCodeService>();
             services.AddScoped<IGetDiscountCodeService, GetDiscountCodeService>();
+            services.AddScoped<IPriceCalculatorService, PriceCalculatorService>();
+            services.AddScoped<IActivationService, ActivationService>();
+            services.AddScoped<IGetTimeLineService, GetTimeLineService>();
+
+
+
+
+
+
 
 
 

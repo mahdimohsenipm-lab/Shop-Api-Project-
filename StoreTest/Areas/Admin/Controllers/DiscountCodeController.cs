@@ -2,6 +2,7 @@
 using Entites.Products;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Services.DiscountCodeService.Area.ActivationService;
 using Services.DiscountCodeService.Area.AddDiscountCode;
 using Services.DiscountCodeService.Area.GetDiscountCode;
 using Services.ViewModel.Area.Model.Dto;
@@ -13,18 +14,21 @@ namespace StoreTest.Areas.Admin.Controllers
     [Area("Admin")]
     [ApiResultFilter]
     [Authorize(Roles = "Admin")]
-    public class DiscountCodeController : Controller
+    public partial class DiscountCodeController : Controller
     {
         private readonly IAddDiscountCodeService _discountCodeService;
         private readonly IGetDiscountCodeService _getDiscountCodeService;
         private readonly IRepository<DiscountCode> _repository;
+        private readonly IActivationService _activationService;
 
         public DiscountCodeController(IAddDiscountCodeService discountCodeService,
-            IGetDiscountCodeService getDiscountCodeService, IRepository<DiscountCode> repository)
+            IGetDiscountCodeService getDiscountCodeService, IRepository<DiscountCode> repository,
+            IActivationService activationService)
         {
             _discountCodeService = discountCodeService;
             _getDiscountCodeService = getDiscountCodeService;
             _repository = repository;
+            _activationService = activationService;
         }
         [HttpGet]
         public IActionResult Index(int? page)
@@ -53,6 +57,15 @@ namespace StoreTest.Areas.Admin.Controllers
 
             await _repository.DeleteAsync(discountcode,cancellationToken);
             return Ok();
+        }
+
+        [HttpPost]
+
+        public async Task<IActionResult> Activation(ActivationRequest request, CancellationToken cancellationToken)
+        {
+            await _activationService.Execute(request,cancellationToken);
+            return Ok();
+        
         }
     }
 }

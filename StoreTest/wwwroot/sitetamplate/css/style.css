@@ -269,3 +269,38 @@ li {
     justify-content: center;
     margin-right: 10px;
 }
+
+
+.price-box {
+    margin-bottom: 12px;
+}
+
+.old-price {
+    display: block;
+    color: #999;
+    text-decoration: line-through;
+    font-size: 13px;
+    margin-bottom: 4px;
+}
+
+.discount-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+.final-price {
+    color: #198754;
+    font-size: 17px;
+    font-weight: bold;
+}
+
+.discount-badge {
+    background: #dc3545;
+    color: #fff;
+    border-radius: 20px;
+    padding: 2px 8px;
+    font-size: 12px;
+    font-weight: bold;
+}

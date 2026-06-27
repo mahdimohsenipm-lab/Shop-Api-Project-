@@ -11,6 +11,7 @@ using Services.ProductsServices.Querys.GetProductSite;
 using Services.ViewModel.Area.Model.Dto;
 using Services.ViewModel.Area.Model.Request;
 using Services.ViewModel.Site;
+using StoreTest.Areas.Admin.Controllers;
 using System.Reflection;
 
 
@@ -57,6 +58,8 @@ namespace WebFramework.CustomMapping
             services.CreateMap<ProductImage, ProductImageDto>().ReverseMap();
             services.CreateMap<DiscountCode, RequestAddDiscountCode>().ReverseMap();
             services.CreateMap<DiscountCode, DiscountCodeDto>().ReverseMap();
+            services.CreateMap<DiscountCode, ActivationRequest>().ReverseMap();
+
 
 
 
@@ -66,12 +69,12 @@ namespace WebFramework.CustomMapping
             //    .ForMember(dest => dest.IsExpired,
             //        opt => opt.MapFrom(src => src.EndTime <= DateTimeOffset.Now));
 
-            var now = DateTimeOffset.Now;
-            services.CreateMap<DiscountCode, DiscountCodeDto>().ForMember(d => d.IsActive,
-    opt => opt.MapFrom(s =>
-        s.Count > 0 &&
-        s.StartTime <= now &&
-        s.EndTime >= now));
+    //        var now = DateTimeOffset.Now;
+    //        services.CreateMap<DiscountCode, DiscountCodeDto>().ForMember(d => d.IsActive,
+    //opt => opt.MapFrom(s =>
+    //    s.Count > 0 &&
+    //    s.StartTime <= now &&
+    //    s.EndTime >= now));
 
 
 
@@ -88,27 +91,27 @@ namespace WebFramework.CustomMapping
 
 
 
-            services.CreateMap<Product, ProductSiteDto>()
-                .ForMember(d => d.FinalPrice,
-                    opt => opt.MapFrom(src =>
-                        src.ProductDiscounts
-                            .Where(x => x.IsActive &&
-                                        x.StartTime <= DateTimeOffset.UtcNow &&
-                                        x.EndTime >= DateTimeOffset.UtcNow)
-                            .OrderByDescending(x => x.StartTime)
-                            .Select(x =>
-                                (int?)(
-                                    x.Percentage.HasValue
-                                        ? src.Price - (src.Price * x.Percentage.Value / 100)
-                                        : (x.Amount.HasValue
-                                            ? src.Price - x.Amount.Value
-                                            : src.Price)
-                                )
-                            )
-                            .FirstOrDefault()
-                            ?? src.Price
-                    )
-                );
+            //services.CreateMap<Product, ProductSiteDto>()
+            //    .ForMember(d => d.FinalPrice,
+            //        opt => opt.MapFrom(src =>
+            //            src.ProductDiscounts
+            //                .Where(x => x.IsActive &&
+            //                            x.StartTime <= DateTimeOffset.UtcNow &&
+            //                            x.EndTime >= DateTimeOffset.UtcNow)
+            //                .OrderByDescending(x => x.StartTime)
+            //                .Select(x =>
+            //                    (int?)(
+            //                        x.Percentage.HasValue
+            //                            ? src.Price - (src.Price * x.Percentage.Value / 100)
+            //                            : (x.Amount.HasValue
+            //                                ? src.Price - x.Amount.Value
+            //                                : src.Price)
+            //                    )
+            //                )
+            //                .FirstOrDefault()
+            //                ?? src.Price
+            //        )
+            //    );
 
 
 

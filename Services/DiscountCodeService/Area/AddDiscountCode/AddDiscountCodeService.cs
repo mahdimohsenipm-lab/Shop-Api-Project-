@@ -23,7 +23,7 @@ namespace Services.DiscountCodeService.Area.AddDiscountCode
             }
             var result=mapper.Map<DiscountCode>(requestAdd);
 
-            result.IsActive=true;
+          
 
             await _repository.AddAsync(result ,cancellationToken);
           

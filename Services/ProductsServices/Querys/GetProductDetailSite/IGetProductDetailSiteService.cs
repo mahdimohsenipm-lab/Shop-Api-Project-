@@ -1,7 +1,4 @@
-﻿using AutoMapper;
-using Data.Contracts;
-using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,36 +9,6 @@ namespace Services.ProductsServices.Querys.GetProductDetailSite
     public interface IGetProductDetailSiteService
     {
         Task<ProductDetailDto> Execute(int id, CancellationToken cancellationToken);
-    }
-    public class GetProductDetailSiteService : IGetProductDetailSiteService
-    {
-        private readonly IProductsRepository productsRepository;
-        private readonly ICategoryRepository categoryRepository;
-        private readonly IMapper mapper;
-
-        public GetProductDetailSiteService(IProductsRepository productsRepository,IMapper mapper,ICategoryRepository categoryRepository)
-        {
-            this.productsRepository = productsRepository;
-            this.mapper = mapper;
-            this.categoryRepository = categoryRepository;
-        }
-        public async Task<ProductDetailDto> Execute(int id,CancellationToken cancellationToken)
-        {
-            var product = await productsRepository.TableNoTracking
-      .Include(x => x.ProductFitures)
-      .Include(x => x.ProductImages)
-      .FirstOrDefaultAsync(x => x.Id == id);
-            if (product == null) return null;
-
-            var category = await categoryRepository.GetByIdAsync(cancellationToken, product.CategoriId);
-
-
-            var mapDto = mapper.Map<ProductDetailDto>(product);
-
-            mapDto.Category = category.Name;
-            return mapDto;
-
-        }
     }
 
     public class ProductDetailDto
@@ -61,6 +28,14 @@ namespace Services.ProductsServices.Querys.GetProductDetailSite
         public string Description { get; set; }
 
         public bool Displayed { get; set; }
+
+        public bool IsDiscount { get; set; }
+
+        public int Amount { get; set; }
+
+        public int Percentage { get; set; }
+
+        public int FinalPrice { get; set; }
 
         public List<ProductFitureDto> ProductFitures { get; set; }
 
