@@ -9,7 +9,7 @@ namespace Services.OrderService.Site.GetPayRequest
 {
     public interface IGetRequestServic
     {
-        Task<RequestPay> Execute(Guid guid);
+        Task<RequestPay> Execute(Guid guid, CancellationToken cancellationToken);
 
     }
 }

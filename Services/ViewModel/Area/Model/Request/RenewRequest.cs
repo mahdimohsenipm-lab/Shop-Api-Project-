@@ -1,7 +1,7 @@
 ﻿namespace StoreTest.Areas.Admin.Controllers
 {
-        public class ActivationRequest
-        {
+        public class RenewRequest
+    {
             public int Id { get; set; }
 
             public DateTimeOffset EndTime { get; set; }

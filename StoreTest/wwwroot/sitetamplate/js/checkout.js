@@ -5,6 +5,12 @@
     const totalItemsElement = document.getElementById("total-items");
     const form = document.getElementById("checkoutForm");
     const messageElement = document.getElementById("checkoutMessage");
+
+    const applyDiscountBtn = document.getElementById("applyDiscountBtn");
+    const discountMessage = document.getElementById("discountMessage");
+    const discountAmount = document.getElementById("discountAmount");
+
+    let appliedDiscount = null;
     // ۱. نمایش آیتم‌های سبد خرید در صفحه
     function displayCheckoutItems() {
         if (!cartContainer) return;
@@ -40,6 +46,8 @@
         if (totalItemsElement) totalItemsElement.textContent = totalCount;
     }
     displayCheckoutItems();
+
+    applyDiscountBtn.addEventListener("click", applyDiscount);
     // ۲. مدیریت ارسال فرم و هدایت به درگاه پرداخت
     form.addEventListener("submit", async function (e) {
         e.preventDefault();
@@ -69,6 +77,7 @@
             phoneNumber: phone, // مطابق با نیاز مدل C# شما
             fullName: fullName,
             note: note,
+            discountCode: document.getElementById("discountCode").value.trim(),
             items: cart.map(item => ({
                 ProductId: item.id,
                 price: item.price,
@@ -93,6 +102,7 @@
                 console.error("Server Error Response:", errorText);
                 throw new Error("پاسخ سرور معتبر نیست (احتمالا خطای داخلی سرور).");
             }
+          
             const result = await response.json();
             if (response.ok && result.isSuccess) {
                 // دریافت آدرس درگاه از خروجی API
@@ -117,4 +127,89 @@
         messageElement.style.color = color;
         messageElement.textContent = text;
     }
+
+
+
+
+    async function applyDiscount() {
+
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+            discountMessage.style.color = "red";
+            discountMessage.textContent = "ابتدا وارد حساب کاربری شوید.";
+            return;
+        }
+
+        const code = document.getElementById("discountCode").value.trim();
+
+        if (!code) {
+            discountMessage.style.color = "red";
+            discountMessage.textContent = "کد تخفیف را وارد کنید.";
+            return;
+        }
+
+        const request = {
+            code: code,
+            items: cart.map(item => ({
+                productId: item.id,
+                count: item.quantity
+            }))
+        };
+
+        try {
+
+            const response = await fetch("https://localhost:7061/api/Discount/Apply", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify(request)
+            });
+
+            const result = await response.json();
+
+            if (!response.ok || !result.isSuccess) {
+
+                appliedDiscount = null;
+
+                discountMessage.style.color = "red";
+                discountMessage.textContent =
+                    result.message || "کد تخفیف معتبر نیست.";
+
+                discountAmount.textContent = "0 تومان";
+
+                return;
+            }
+
+            appliedDiscount = result.data;
+
+            discountMessage.style.color = "green";
+
+            if (appliedDiscount.discountPercrntage > 0) {
+                discountMessage.textContent =
+                    `کد تخفیف اعمال شد (${appliedDiscount.discountPercrntage}% تخفیف)`;
+            } else {
+                discountMessage.textContent =
+                    "کد تخفیف اعمال شد";
+            }
+
+            discountAmount.textContent =
+                appliedDiscount.discountAmount.toLocaleString() + " تومان";
+
+            totalElement.textContent =
+                appliedDiscount.finalPrice.toLocaleString() + " تومان";
+
+        }
+        catch (error) {
+
+            console.error(error);
+
+            discountMessage.style.color = "red";
+            discountMessage.textContent =
+                "خطا در ارتباط با سرور";
+        }
+    }
 });
+

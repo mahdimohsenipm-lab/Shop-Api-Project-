@@ -58,7 +58,9 @@ namespace WebFramework.CustomMapping
             services.CreateMap<ProductImage, ProductImageDto>().ReverseMap();
             services.CreateMap<DiscountCode, RequestAddDiscountCode>().ReverseMap();
             services.CreateMap<DiscountCode, DiscountCodeDto>().ReverseMap();
-            services.CreateMap<DiscountCode, ActivationRequest>().ReverseMap();
+            services.CreateMap<DiscountCode, RenewRequest>().ReverseMap();
+            services.CreateMap<DiscountCode, RequestUpdateDiscountCode>().ReverseMap();
+
 
 
 
@@ -69,12 +71,12 @@ namespace WebFramework.CustomMapping
             //    .ForMember(dest => dest.IsExpired,
             //        opt => opt.MapFrom(src => src.EndTime <= DateTimeOffset.Now));
 
-    //        var now = DateTimeOffset.Now;
-    //        services.CreateMap<DiscountCode, DiscountCodeDto>().ForMember(d => d.IsActive,
-    //opt => opt.MapFrom(s =>
-    //    s.Count > 0 &&
-    //    s.StartTime <= now &&
-    //    s.EndTime >= now));
+            //        var now = DateTimeOffset.Now;
+            //        services.CreateMap<DiscountCode, DiscountCodeDto>().ForMember(d => d.IsActive,
+            //opt => opt.MapFrom(s =>
+            //    s.Count > 0 &&
+            //    s.StartTime <= now &&
+            //    s.EndTime >= now));
 
 
 

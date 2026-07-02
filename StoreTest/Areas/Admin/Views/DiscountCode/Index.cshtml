@@ -92,13 +92,13 @@
 
                                 <td>
 
-                                    @if (item.Amount.HasValue)
+                                    @if (item.Percentage.Value==0)
                                     {
                                         <span class="badge badge-info">
                                             @item.Amount.Value.ToString("N0") تومان
                                         </span>
                                     }
-                                    else if (item.Percentage.HasValue)
+                                    else if (item.Amount.Value==0)
                                     {
                                         <span class="badge badge-primary">
                                             @item.Percentage%
@@ -206,40 +206,48 @@ else
 
                                 <td>
 
-                                    <a href="/Admin/DiscountCode/Edit/@item.Id"
-                                       class="btn btn-warning btn-sm">
-                                        ویرایش
-                                    </a>
+<button type="button"
+        class="btn btn-warning btn-sm"
+        data-id="@item.Id"
+        data-code="@item.Code"
+        data-limitprice="@item.LimitPrice"
+        data-amount="@item.Amount"
+        data-percentage="@item.Percentage"
+        onclick="ShowEditModal(this)">
+    ویرایش
+</button>
 
                                     <button class="btn btn-danger btn-sm"
                                             onclick="Delete(@item.Id)">
                                         حذف
                                     </button>
 
+     <button class="btn btn-info btn-sm"
+            data-id="@item.Id"
+            onclick="discountCodeModal(this)">
+        تمدید 
+    </button>
+
 @if (item.Status == DiscountCodeStatus.Active)
 {
     <button class="btn btn-outline-danger btn-sm"
             data-id="@item.Id"
-            onclick="Disable(this)">
+            onclick="Activat(this)">
         غیرفعال کردن
     </button>
-}
-else if (item.Status == DiscountCodeStatus.Finished)
-{
-    <button class="btn btn-outline-primary btn-sm"
-            data-id="@item.Id"
-            onclick="discountCodeModal(this)">
-        شارژ مجدد
-    </button>
-}
-else
-{
-    <button class="btn btn-outline-success btn-sm"
-            data-id="@item.Id"
-            onclick="discountCodeModal(this)">
-        فعال سازی
-    </button>
-}
+                                        }
+                                        else
+                                        {
+
+<button class="btn btn-outline-success btn-sm"
+          data-id="@item.Id"
+          onclick="Activat(this)">
+      فعال کردن
+  </button>
+
+                                            
+                                        }
+
 
                                 </td>
 
@@ -409,9 +417,9 @@ else
                 }
             })
         }
+        
 
-
-function Activation() {
+function Renew() {
 
     const model = {
         Id: $("#DiscountCodeId").val(),
@@ -450,12 +458,12 @@ function Activation() {
     }
 
     $.ajax({
-        url: "/Admin/DiscountCode/Activation",
+        url: "/Admin/DiscountCode/Renew",
         type: "POST",
         data: model,
 
         beforeSend: function () {
-            $("#btnActivation").prop("disabled", true);
+            $("#btnRenew").prop("disabled", true);
         },
 
         success: function (data) {
@@ -490,7 +498,7 @@ function Activation() {
         },
 
         complete: function () {
-            $("#btnActivation").prop("disabled", false);
+            $("#btnRenew").prop("disabled", false);
         }
     });
 }
@@ -506,8 +514,206 @@ function discountCodeModal(btn) {
 
 
 
-modal.show();
 
+
+
+ function Activat(button) {
+            swal.fire({
+                title: 'تغییر وضعیت کاربر',
+                text: "کاربر گرامی از تغییر وضعیت کاربر مطمئن هستید؟",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#7cacbe',
+                confirmButtonText: 'بله ، تغییر وضعیت انجام شود',
+                cancelButtonText: 'خیر'
+            }).then((result) => {
+                if (result.value) {
+
+                    var id = $(button).data("id");
+
+                    $.ajax({
+                        contentType: 'application/x-www-form-urlencoded',
+                        dataType: 'json',
+                        type: "POST",
+                        url: "/Admin/DiscountCode/Activation",
+                        data: {
+            Id: id
+        },
+                        success: function (data) {
+                            if (data.isSuccess == true) {
+                                swal.fire(
+                                    'موفق!',
+                                    data.message,
+                                    'success'
+                                ).then(function (isConfirm) {
+                                    location.reload();
+                                });
+                            }
+                            else {
+
+                                swal.fire(
+                                    'هشدار!',
+                                    data.message,
+                                    'warning'
+                                );
+
+                            }
+                        },
+                        error: function (request, status, error) {
+                            alert(request.responseText);
+                        }
+
+                    });
+
+                }
+            })
+        }
+
+      
+        $(function () {
+    $("input[name='DiscountType']").on("change", function () {
+
+   
+        if ($("#DiscountAmount").is(":checked")) {
+
+            $("#EditAmount").prop("disabled", false);
+            $("#EditPercentage").prop("disabled", true);
+
+        } else {
+
+            $("#EditPercentage").prop("disabled", false);
+            $("#EditAmount").prop("disabled", true);
+
+        }
+
+    });
+
+});
+
+function ShowEditModal(btn) {
+
+    var amount = parseInt($(btn).data("amount")) || 0;
+    var percentage = parseInt($(btn).data("percentage")) || 0;
+
+    $("#EditId").val($(btn).data("id"));
+    $("#EditCode").val($(btn).data("code"));
+    $("#EditLimitPrice").val($(btn).data("limitprice"));
+
+    $("#EditAmount").val(amount);
+    $("#EditPercentage").val(percentage);
+
+    if (amount > 0) {
+    $("#DiscountAmount").prop("checked", true);
+} else {
+    $("#DiscountPercentage").prop("checked", true);
+}
+
+ToggleDiscountFields();
+
+    $("#editDiscountModal").modal("show");
+   
+}
+
+function UpdateDiscount() {
+
+    var amount = parseInt($("#EditAmount").val()) || 0;
+    var percentage = parseInt($("#EditPercentage").val()) || 0;
+
+    // هر دو خالی
+    if (amount <= 0 && percentage <= 0) {
+
+        Swal.fire({
+            icon: "warning",
+            title: "توجه",
+            text: "یکی از مقادیر مبلغ یا درصد تخفیف را وارد کنید."
+        });
+
+        return;
+    }
+
+    // هر دو پر
+    if (amount > 0 && percentage > 0) {
+
+        Swal.fire({
+            icon: "warning",
+            title: "توجه",
+            text: "فقط یکی از مقادیر مبلغ یا درصد می‌تواند وارد شود."
+        });
+
+        return;
+    }
+
+    var model = {
+
+        Id: $("#EditId").val(),
+        Code: $("#EditCode").val(),
+        LimitPrice: $("#EditLimitPrice").val(),
+        Amount: amount,
+        Percentage: percentage
+
+    };
+
+    $.ajax({
+
+        url: "/Admin/DiscountCode/Edit",
+        type: "POST",
+        data: model,
+
+        success: function (result) {
+
+            if (result.isSuccess) {
+
+                $("#editDiscountModal").modal("hide");
+
+                Swal.fire({
+                    icon: "success",
+                    title: "موفق",
+                    text: result.message
+                }).then(function () {
+                    location.reload();
+                });
+
+            } else {
+
+                Swal.fire({
+                    icon: "error",
+                    title: "خطا",
+                    text: result.message
+                });
+
+            }
+
+        }
+
+    });
+
+}
+
+
+function ToggleDiscountFields() {
+
+    if ($("#DiscountAmount").is(":checked")) {
+
+        $("#EditAmount").prop("disabled", false);
+
+        $("#EditPercentage")
+            .val(0)
+            .prop("disabled", true);
+
+    } else {
+
+        $("#EditPercentage").prop("disabled", false);
+
+        $("#EditAmount")
+            .val(0)
+            .prop("disabled", true);
+
+    }
+}
+
+$(document).on("change", "input[name='DiscountType']", ToggleDiscountFields);
+ 
 </script>
 }
 
@@ -554,7 +760,7 @@ modal.show();
                <button type="button" class="btn btn-secondary" data-dismiss="modal">
     انصراف
 </button>
-                <button class="btn btn-success" onclick="Activation()" >ایجاد</button>
+                <button class="btn btn-success" onclick="Renew()" >ایجاد</button>
             </div>
 
         </div>
@@ -562,3 +768,119 @@ modal.show();
 </div>
 }
     
+
+ @section DiscountModals
+{
+
+
+<div class="modal fade" id="editDiscountModal" tabindex="-1">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">ویرایش کد تخفیف</h5>
+
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+
+                <input type="hidden" id="EditId" />
+
+                <div class="form-group">
+                    <label>کد تخفیف</label>
+                    <input type="text"
+                           id="EditCode"
+                           class="form-control"
+                           maxlength="8" />
+                </div>
+
+                <div class="form-group">
+                    <label>حداقل مبلغ خرید</label>
+                    <input type="number"
+                           id="EditLimitPrice"
+                           class="form-control" />
+                </div>
+
+<div class="form-group">
+
+    <label>نوع تخفیف</label>
+
+    <div class="d-flex">
+
+        <div class="form-check mr-4">
+
+            <input class="form-check-input"
+                   type="radio"
+                   name="DiscountType"
+                   id="DiscountAmount"
+                   value="amount">
+
+            <label class="form-check-label" for="DiscountAmount">
+                مبلغی
+            </label>
+
+        </div>
+
+        <div class="form-check">
+
+            <input class="form-check-input"
+                   type="radio"
+                   name="DiscountType"
+                   id="DiscountPercentage"
+                   value="percentage">
+
+            <label class="form-check-label" for="DiscountPercentage">
+                درصدی
+            </label>
+
+        </div>
+
+    </div>
+
+</div>
+
+                <div class="form-group">
+                    <label>مبلغ تخفیف</label>
+                    <input type="number"
+                           id="EditAmount"
+                           class="form-control" />
+                </div>
+
+                <div class="form-group">
+                    <label>درصد تخفیف</label>
+                    <input type="number"
+                           id="EditPercentage"
+                           class="form-control" />
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button type="button"
+                        class="btn btn-success"
+                        onclick="UpdateDiscount()">
+                    ذخیره
+                </button>
+
+                <button type="button"
+                        class="btn btn-secondary"
+                        data-dismiss="modal">
+                    انصراف
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+}

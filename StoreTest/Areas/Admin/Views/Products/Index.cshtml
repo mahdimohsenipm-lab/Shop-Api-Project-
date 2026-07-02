@@ -331,8 +331,8 @@ $(document).ready(function () {
 
         const formData = {
             productId: productId,
-            amount: amount,
-            percentage: percentage,
+            amount: amount ?? 0,
+            percentage: percentage ?? 0,
             endTime: utcDateTimeString
         };
 

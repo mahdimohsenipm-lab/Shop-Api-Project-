@@ -1,8 +1,12 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Data.Contracts;
+using Entites.Products;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Services.OrderService.Site.AddOrder;
 using Services.OrderService.Site.AddPayRequest;
+using Services.OrderService.Site.ApplyDiscountCode;
 using Services.OrderService.Site.GetOrder;
 using Services.OrderService.Site.GetPayRequest;
 using Services.OrderService.Site.PaymentVerification;
@@ -12,6 +16,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using WebFramework.Filter;
+using static ZarinPal.Class.Payment;
 
 
 namespace StoreTest.Controllers
@@ -30,10 +35,14 @@ namespace StoreTest.Controllers
         private readonly ILogger<PayController> _logger;
         private readonly IGetOrderService _getOrderService;
         private readonly IUpdateTotalPriceService _updateTotalPriceService;
+        private readonly IApplyDiscountCodeService _applyDiscountCodeService;
+        private readonly IRepository<DiscountCode> _repository;
         public PayController(
             IGetOrderService getOrderService, IAddOrderService addOrderService,
             IAddRequestPay addRequestPay, IGetRequestServic getRequestServic,
-            IPaymentVerificationService paymentVerificationService, ILogger<PayController> logger,IUpdateTotalPriceService updateTotalPriceService)
+            IPaymentVerificationService paymentVerificationService,
+            ILogger<PayController> logger,IUpdateTotalPriceService updateTotalPriceService
+            , IApplyDiscountCodeService applyDiscountCodeService, IRepository<DiscountCode> repository)
         {
             _addOrderService = addOrderService;
             _addRequestPayService = addRequestPay;
@@ -42,6 +51,8 @@ namespace StoreTest.Controllers
             _logger = logger;
             _getOrderService = getOrderService;
             _updateTotalPriceService = updateTotalPriceService;
+            _applyDiscountCodeService = applyDiscountCodeService;
+            _repository = repository;
         }
       
    
@@ -50,29 +61,59 @@ namespace StoreTest.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> Index(RequestAddPay requestAddPay, CancellationToken cancellationToken)
         {
+            DateTimeOffset now = DateTimeOffset.Now;
+
+           
+
+         
+
             if (requestAddPay == null) return BadRequest("مقادیر ارسالی معتبر نیست.");
 
             var userIdValue = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             if (!int.TryParse(userIdValue, out int userId)) return BadRequest("شناسه کاربر نامعتبر است.");
 
+           
 
             var requestPay = await _addRequestPayService.Execute(userId, cancellationToken);
-
+           
             await _addOrderService.Execute(new RequestAddOrder
             {
                 Items = requestAddPay.Items,
                 Address = requestAddPay.Address,
                 PayRequestId = requestPay.Id,
-                UserId = userId
+                UserId = userId,
+                DiscountCode=requestAddPay.DiscountCode??""
+
             }, cancellationToken);
 
             var order = _getOrderService.Execute(requestPay.Id);
 
-            var realPrice = order.TotalPrice * 10;
+
+            decimal realPrice = order.TotalPrice;
+
+            if (!string.IsNullOrWhiteSpace(requestAddPay.DiscountCode))
+            {
+                var discountResult = await _applyDiscountCodeService.Execute(
+                    new ApplyDiscountCodeRequest
+                    {
+                        Code = requestAddPay.DiscountCode,
+                        Items = requestAddPay.Items
+                            .Select(x => new ApplyDiscountItemRequest
+                            {
+                                ProductId = x.ProductId,
+                                Count = x.Count
+                            })
+                            .ToList()
+                    },
+                    cancellationToken);
+
+                realPrice = discountResult.FinalPrice;
+            }
+            realPrice = realPrice * 10;
 
             ////////Add TotalPrice in RequestPay!
-          await _updateTotalPriceService.Execute(requestPay.Id,order.TotalPrice,cancellationToken);
+            await _updateTotalPriceService.Execute(requestPay.Id,order.TotalPrice,cancellationToken);
 
             try
             {
@@ -113,13 +154,25 @@ namespace StoreTest.Controllers
         }
         [HttpGet("[action]")] // اینجا را از HttpPost به HttpGet تغییر دهید
         [AllowAnonymous]
-        public async Task<IActionResult> Vrifay(Guid guid, string Authority, string Status)
+        public async Task<IActionResult> Vrifay(Guid guid, string Authority, string Status,CancellationToken cancellationToken)
         {
+            DateTimeOffset now = DateTimeOffset.Now;
             if (Status != "OK" || string.IsNullOrEmpty(Authority))
             {
                 return Redirect("/sitetamplate/PaymentFailed.html?error=0");
+
+                
             }
-            var requestPay = await _getRequestServic.Execute(guid);
+            var requestPay = await _getRequestServic.Execute(guid,cancellationToken);
+
+            var DiscountCode = await _repository.TableNoTracking.FirstOrDefaultAsync(x => x.IsActive == true
+            && x.Count > 0 && x.StartTime < now && x.EndTime > now && requestPay.Amount > x.LimitPrice && x.Code == requestPay.Order.DiscountCode);
+            if (DiscountCode != null)
+            {
+                DiscountCode.Count = DiscountCode.Count - 1;
+                _repository.Update(DiscountCode);
+
+            }
             if (requestPay == null)
             {
                 return BadRequest("درخواست پرداخت معتبر یافت نشد.");

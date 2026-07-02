@@ -16,7 +16,10 @@ namespace Services.DiscountCodeService.Area.GetDiscountCode
             // اولویت وضعیت‌ها
             //if (!request.IsActive)
             //    return Disabled(request, now);
-
+            if (!request.IsActive)
+            {
+                return NotActive(request, now);
+            }
             if (request.Count <= 0)
                 return Finished(request, now);
 
@@ -35,6 +38,22 @@ namespace Services.DiscountCodeService.Area.GetDiscountCode
             {
                 Status = DiscountCodeStatus.Active,
                 StatusText = "کد تخفیف فعال است",
+
+                RemainingTime = request.EndTime - now,
+                RemainingTimeText = "زمان باقی مانده تا پایان",
+
+                IsStarted = true,
+                IsExpired = false
+            };
+        }
+
+
+        private TimeLine NotActive(DiscountCodeDto request, DateTimeOffset now)
+        {
+            return new TimeLine
+            {
+                Status = DiscountCodeStatus.Disabled,
+                StatusText = "کد تخفیف غیرفعال است",
 
                 RemainingTime = request.EndTime - now,
                 RemainingTimeText = "زمان باقی مانده تا پایان",

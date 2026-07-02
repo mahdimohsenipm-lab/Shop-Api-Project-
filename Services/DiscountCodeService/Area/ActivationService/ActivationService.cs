@@ -15,7 +15,7 @@ namespace Services.DiscountCodeService.Area.ActivationService
             _repository = repository;
             _mapper = mapper;
         }
-        public async Task Execute(ActivationRequest request,CancellationToken cancellationToken)
+        public async Task Execute(RenewRequest request,CancellationToken cancellationToken)
         {
             var discount = await _repository.GetByIdAsync(cancellationToken, request.Id);
 

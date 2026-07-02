@@ -28,6 +28,7 @@ using Services.OrderService.Area.GetPayRequestAdmin;
 using Services.OrderService.Area.GetRequestPayAdminDetail;
 using Services.OrderService.Site.AddOrder;
 using Services.OrderService.Site.AddPayRequest;
+using Services.OrderService.Site.ApplyDiscountCode;
 using Services.OrderService.Site.GetOrder;
 using Services.OrderService.Site.GetPayRequest;
 using Services.OrderService.Site.PaymentVerification;
@@ -83,23 +84,7 @@ namespace WebFramework.Configuration
             services.AddScoped<IPriceCalculatorService, PriceCalculatorService>();
             services.AddScoped<IActivationService, ActivationService>();
             services.AddScoped<IGetTimeLineService, GetTimeLineService>();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            services.AddScoped<IApplyDiscountCodeService, ApplyDiscountCodeService>();
 
 
 

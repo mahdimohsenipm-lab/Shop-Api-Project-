@@ -303,4 +303,72 @@ body {
         font-size: 15px;
         padding: 14px;
     }
+
+
 }
+.discount-box {
+    margin: 18px 0;
+}
+
+    .discount-box label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: 700;
+        color: #374151;
+    }
+
+.discount-input-group {
+    display: flex;
+    gap: 10px;
+}
+
+    .discount-input-group input {
+        flex: 1;
+        border: 1px solid #dbe3f0;
+        border-radius: 14px;
+        padding: 12px 15px;
+        font-size: 14px;
+        outline: none;
+        transition: .25s;
+        background: #fff;
+    }
+
+        .discount-input-group input:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 4px rgba(79,70,229,.12);
+        }
+
+    .discount-input-group button {
+        min-width: 95px;
+        border: none;
+        border-radius: 14px;
+        background: linear-gradient(135deg,#10b981,#059669);
+        color: #fff;
+        font-weight: 700;
+        cursor: pointer;
+        transition: .25s;
+    }
+
+        .discount-input-group button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 18px rgba(16,185,129,.25);
+        }
+
+        .discount-input-group button:active {
+            transform: scale(.98);
+        }
+
+.discount-message {
+    margin-top: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    min-height: 20px;
+}
+
+    .discount-message.success {
+        color: #16a34a;
+    }
+
+    .discount-message.error {
+        color: #dc2626;
+    }

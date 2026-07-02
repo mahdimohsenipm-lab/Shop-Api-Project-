@@ -25,7 +25,8 @@ namespace Entites.Orders
         public ICollection<OrderDetails> OrderDetails { get; set; }
 
 
-  
+     //برای بررسی در متود زرین پال
+        public string DiscountCode { get; set; }
 
     }
 

@@ -42,9 +42,10 @@ namespace Services.OrderService.Site.AddOrder
                 orderState = OrderState.Processing,
                 UserId = user.Id,
                 TotalPrice = 0,
-                RequestPay=requestpay,
-                RequestPayId=requestpay.Id
-               
+                RequestPay = requestpay,
+                RequestPayId = requestpay.Id,
+                DiscountCode = order.DiscountCode.ToUpper().Trim()
+
             };
             // ذخیره سفارش برای اینکه ID تولید شود
             await _orderRepository.AddAsync(neworder, cancellationToken);

@@ -48,6 +48,27 @@
                         <span>تعداد کل آیتم‌ها:</span>
                         <span id="total-items">0</span>
                     </div>
+                    <div class="discount-box">
+                        <label for="discountCode">کد تخفیف</label>
+
+                        <div class="discount-input-group">
+                            <input type="text"
+                                   id="discountCode"
+                                   maxlength="8"
+                                   placeholder="کد تخفیف را وارد کنید">
+
+                            <button type="button" id="applyDiscountBtn">
+                                اعمال
+                            </button>
+                        </div>
+
+                        <div id="discountMessage" class="discount-message"></div>
+                    </div>
+
+                    <div class="summary-row">
+                        <span>تخفیف:</span>
+                        <span id="discountAmount">0 تومان</span>
+                    </div>
                     <div class="summary-row total-row">
                         <span>مبلغ کل:</span>
                         <span id="checkout-total">0 تومان</span>
