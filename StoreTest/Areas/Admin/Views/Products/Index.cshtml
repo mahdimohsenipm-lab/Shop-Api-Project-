@@ -50,8 +50,8 @@
                                                         <input type="hidden" id="RealPrice" value="@item.Price" /></td>
                                                         <td>@item.Displayed</td>
                                                         <td>
-                                                            <a onclick="ShowModalEdituser('@item.Id' , '@item.Name',@item.Price,@item.Inventory)" class="btn btn-info">ویرایش</a>
-                                                            <a onclick="DeleteUser(@item.Id)" class="btn btn-danger">حذف</a>
+                                                            <a onclick="ShowModalEditProduct('@item.Id' , '@item.Name',@item.Price,@item.Inventory)" class="btn btn-info">ویرایش</a>
+                                                            <a onclick="Delete(@item.Id)" class="btn btn-danger">حذف</a>
                                                             <a href="~/admin/products/Detail/@item.Id" class="btn btn-info">اطلاعات بیشتر</a>
                                                              @if (item.IsDiscount==true)
                                                             {
@@ -133,7 +133,7 @@
      
 
 
-        function DeleteUser(id) {
+        function Delete(id) {
                 swal.fire({
                     title: 'حذف کاربر',
                     text: "کاربر گرامی از حذف کاربر مطمئن هستید؟",
@@ -187,7 +187,7 @@
 
 
 
-                 function Edituser() {
+                 function EditProduct() {
 
                     var id = $("#Edit_UserId").val();
                     var Name = $("#Edit_Fullname").val();
@@ -231,17 +231,20 @@
                         }
                     });
 
-                    $('#EditUser').modal('hide');
+                    $('#EditProduct').modal('hide');
 
                 }
 
-                                 function ShowModalEdituser(Id, Name,Price,Inventory) {
+                
+                
+
+                                 function ShowModalEditProduct(Id, Name,Price,Inventory) {
                                     $('#Edit_Fullname').val(Name)
                                     $('#Edit_UserId').val(Id)
                                     $('#Edit_Price').val(Price)
                                     $('#Edit_Inventory').val(Inventory)
 
-                                    $('#EditUser').modal('show');
+                                    $('#EditProduct').modal('show');
 
                                 }
 
@@ -374,7 +377,7 @@ $(document).ready(function () {
 @section Modals
 {
 
-    <div class="modal fade" id="EditUser" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal fade" id="EditProduct" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -410,7 +413,7 @@ $(document).ready(function () {
                 </div>
                 <div class="modal-footer">
                     <a class="btn btn-secondary" data-dismiss="modal">بستن</a>
-                    <a class="btn btn-primary" onclick="Edituser()">اعمال تغییرات</a>
+                    <a class="btn btn-primary" onclick="EditProduct()">اعمال تغییرات</a>
                 </div>
             </div>
         </div>

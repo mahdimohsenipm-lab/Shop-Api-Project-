@@ -1,4 +1,5 @@
 ﻿using Entites.Common;
+using Entites.Users;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -33,6 +34,8 @@ namespace Entites.Products
         public virtual ICollection<ProductFiture> ProductFitures { get; set; }
 
         public virtual ICollection<ProductImage> ProductImages { get; set; }
+
+        public virtual ICollection<Comment> Comments { get; set; }
 
 
     }

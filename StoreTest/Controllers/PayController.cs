@@ -83,7 +83,7 @@ namespace StoreTest.Controllers
                 Address = requestAddPay.Address,
                 PayRequestId = requestPay.Id,
                 UserId = userId,
-                DiscountCode=requestAddPay.DiscountCode??""
+                DiscountCode=requestAddPay.DiscountCode??null
 
             }, cancellationToken);
 

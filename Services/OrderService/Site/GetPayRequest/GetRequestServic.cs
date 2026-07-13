@@ -21,7 +21,7 @@ namespace Services.OrderService.Site.GetPayRequest
         {
             var result = await _requestPayRepository.TableNoTracking.Include(x=>x.Order).ThenInclude(x=>x.OrderDetails).Where(x => x.Guid == guid).FirstOrDefaultAsync();
 
-            if (result.Order.DiscountCode!=null)
+            if (result.Order.DiscountCode!="")
             {
                 var resultdiscount =await _applyDiscountCodeService.Execute(new ApplyDiscountCodeRequest 
                 {

@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="CommentService\Area\" />
     <Folder Include="DiscountCodeService\Site\" />
   </ItemGroup>
 

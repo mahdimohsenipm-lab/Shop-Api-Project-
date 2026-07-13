@@ -60,6 +60,8 @@ namespace WebFramework.CustomMapping
             services.CreateMap<DiscountCode, DiscountCodeDto>().ReverseMap();
             services.CreateMap<DiscountCode, RenewRequest>().ReverseMap();
             services.CreateMap<DiscountCode, RequestUpdateDiscountCode>().ReverseMap();
+            services.CreateMap<Comment, RequestAddComment>().ReverseMap();
+
 
 
 

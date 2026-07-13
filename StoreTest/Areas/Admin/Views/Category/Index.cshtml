@@ -174,10 +174,10 @@
                       }
                   })
               }
+     
 
 
-
-                      function Edituser() {
+                      function EditCategory() {
 
                         var userId = $("#EditU").val();
                                var Name = $("#EditN").val();
@@ -217,7 +217,7 @@
                             }
                         });
 
-                        $('#EditUser').modal('hide');
+                        $('#EditCategory').modal('hide');
 
                     }
 
@@ -226,7 +226,7 @@
                                           $('#EditN').val(Name)
                               $('#EditU').val(UserId)
 
-                        $('#EditUser').modal('show');
+                        $('#EditCategory').modal('show');
 
                     }
 
@@ -246,12 +246,12 @@
 
 @section Modals
 {
-    <!-- Modal Edit User -->
-    <div class="modal fade" id="EditUser" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+   
+    <div class="modal fade" id="EditCategory" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">ویرایش کاربر</h5>
+                    <h5 class="modal-title" id="exampleModalLongTitle">ویرایش دسته بندی</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -260,14 +260,14 @@
                     <div class="col-xl-12 col-lg-12 col-md-12 mb-1">
                         <fieldset class="form-group">
                             <input type="hidden" id="EditU" />
-                            <label for="basicInput">نام و نام خانوادگی</label>
+                            <label for="basicInput">نام </label>
                             <input type="text" class="form-control" id="EditN">
                         </fieldset>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <a class="btn btn-secondary" data-dismiss="modal">بستن</a>
-                    <a class="btn btn-primary" onclick="Edituser()">اعمال تغییرات</a>
+                    <a class="btn btn-primary" onclick="EditCategory()">اعمال تغییرات</a>
                 </div>
             </div>
         </div>

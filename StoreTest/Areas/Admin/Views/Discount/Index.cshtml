@@ -51,7 +51,7 @@
                                     </td>
                                     <td class="text-center">
                                         <div class="btn-group btn-group-sm" role="group">
-                                            <a asp-action="Edit" onclick="UserSatusChange(@item.Id)" class="btn btn-outline-primary btn-sm">
+                                            <a asp-action="Edit" onclick="SatusChange(@item.Id)" class="btn btn-outline-primary btn-sm">
                                                 <i class="fas fa-edit"></i> تغییر وضعیت
                                             </a>
                                             <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger btn-sm" onclick="Delete(@item.Id)">
@@ -167,9 +167,9 @@
              }
          })
      }
+     
 
-
-      function UserSatusChange(Id) {
+      function SatusChange(Id) {
             swal.fire({
                 title: 'تغییر وضعیت ',
                 text: "کاربر گرامی از تغییر وضعیت  مطمئن هستید؟",

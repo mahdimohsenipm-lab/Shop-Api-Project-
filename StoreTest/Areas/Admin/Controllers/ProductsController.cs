@@ -46,6 +46,7 @@ namespace StoreTest.Areas.Admin.Controllers
             var now = DateTimeOffset.UtcNow;
             var products = product.TableNoTracking.Select(x=> new ProductDto
             {
+                Inventory=x.Inventory,
                 Brand=x.Brand,
                 Price=x.Price,
                 Id=x.Id,
