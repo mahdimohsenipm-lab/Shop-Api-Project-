@@ -19,6 +19,8 @@ An e-commerce REST API built with ASP.NET Core following Clean Architecture prin
 * Discount Code Management
 * ZarinPal Payment Integration
 * Global Exception Handling
+* Unit Testing with xUnit & Moq
+
 
 ## Tech Stack
 
@@ -31,6 +33,9 @@ An e-commerce REST API built with ASP.NET Core following Clean Architecture prin
 * Cookie Authentication
 * Razor Pages
 * AutoMapper
+* Xunit
+* Moq
+* AAA 
 
 ## Project Structure
 
@@ -40,7 +45,9 @@ An e-commerce REST API built with ASP.NET Core following Clean Architecture prin
 ├── Entities
 ├── Services
 ├── StoreTest
+├── Test
 └── WebFramework
+
 ```
 
 ## Getting Started
