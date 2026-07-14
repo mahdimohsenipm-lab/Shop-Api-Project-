@@ -4,6 +4,6 @@ namespace Services.CommentService.Site
 {
     public interface IAddCommentService
     {
-        Task<AddCommentResponse> Eecute(RequestAddComment request,CancellationToken cancellationToken);
+        Task<AddCommentResponse> Execute(RequestAddComment request,CancellationToken cancellationToken);
     }
 }

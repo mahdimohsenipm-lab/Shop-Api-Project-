@@ -21,7 +21,7 @@ namespace Services.CommentService.Site
             _mapper = mapper;
             _userManager = userManager;
         }
-        public async Task<AddCommentResponse> Eecute(RequestAddComment request, CancellationToken cancellationToken)
+        public async Task<AddCommentResponse> Execute(RequestAddComment request, CancellationToken cancellationToken)
         {
              if (request is null)
                 {
@@ -44,7 +44,7 @@ namespace Services.CommentService.Site
                 };
             }
             var result = _mapper.Map<Comment>(request);
-            var user =await _userManager.FindByIdAsync(result.UserId);
+            var user =await _userManager.FindByIdAsync(request.UserId);
             if (user==null)
             {
                 return new AddCommentResponse

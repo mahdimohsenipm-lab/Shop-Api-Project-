@@ -33,7 +33,7 @@ namespace StoreTest.Controllers
             }
 
             request.UserId = userid;
-            var result =await _addCommentService.Eecute(request,cancellationToken);
+            var result =await _addCommentService.Execute(request,cancellationToken);
 
             if (result.IsSuccess==false)
             {
