@@ -31,11 +31,13 @@ namespace WebFramework.Configuration
             string adminUserName = "admin";
             string adminEmail = "admin@test.com";
             string adminPassword = "Admin123!";
+            string adminFullName = "Admin";
             var adminUser = await userManager.FindByNameAsync(adminUserName);
             if (adminUser == null)
             {
                 var user = new User
                 {
+                    FullName = adminFullName,
                     UserName = adminUserName,
                     Email = adminEmail,
                     EmailConfirmed = true,

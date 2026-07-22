@@ -35,28 +35,41 @@ namespace Services.ProductsServices.Querys.GetProductDetailSite
             if (product == null) return null;
 
             var category = await categoryRepository.GetByIdAsync(cancellationToken, product.CategoriId);
-
+            var now = DateTimeOffset.UtcNow;
 
             var discount = await discountRepository.TableNoTracking.OrderByDescending(x => x.StartTime)
-            .Where(x => x.ProductId == product.Id).FirstOrDefaultAsync();
+            .Where(x => x.ProductId == product.Id&&x.IsActive==true&&x.StartTime<now&&x.EndTime>now).FirstOrDefaultAsync();
+
+           
 
             var mapDto = mapper.Map<ProductDetailDto>(product);
+           
 
             if (discount!=null)
             {
                 mapDto.IsDiscount = true;
+                mapDto.FinalPrice = priceCalculatorService.Calculate(new ProductDiscountDto
+                { Amount = discount.Amount, Percentage = discount.Percentage }, product.Price);
+
+                mapDto.IsDiscount = true;
+
+                mapDto.Amount = discount.Amount.Value;
+
+                mapDto.Percentage = discount.Percentage.Value;
+            }
+            else
+            {
+                mapDto.IsDiscount = false;
+                mapDto.FinalPrice = mapDto.Price;
+
             }
 
-            var finalPrice = priceCalculatorService.Calculate(new ProductDiscountDto
-            {Amount=discount.Amount,Percentage=discount.Percentage },product.Price);
 
-            mapDto.Amount = discount.Amount.Value;
 
-            mapDto.Percentage = discount.Percentage.Value;
+
 
             mapDto.Category = category.Name;
 
-            mapDto.FinalPrice = finalPrice;
 
             return mapDto;
 

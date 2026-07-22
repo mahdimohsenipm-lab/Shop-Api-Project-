@@ -1,4 +1,4 @@
-﻿namespace Services.CommentService.Site
+﻿namespace Services.CommentService.Site.AddComent
 {
     public class AddCommentResponse
     {

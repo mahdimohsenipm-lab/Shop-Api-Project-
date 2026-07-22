@@ -1,6 +1,7 @@
 ﻿using Data.Contracts;
 using Entites.Products;
 using Microsoft.EntityFrameworkCore;
+using Services.DiscountService.Area.GetDiscountService;
 using System.Data;
 
 namespace Services.DiscountService.Area.GetDiscountDetail

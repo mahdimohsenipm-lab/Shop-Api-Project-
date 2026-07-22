@@ -9,13 +9,14 @@ namespace Entites.Users
     {
         public int ProductId { get; set; }
         public Product Product { get; set; } = null!;
-        public string UserId { get; set; } = null!;
+        public int UserId { get; set; } = 0!;
         public User User { get; set; }
         public string Text { get; set; } = null!;
         public byte Rate { get; set; }
         public bool IsConfirmed { get; set; }
         public int? ParentId { get; set; }
         public Comment? Parent { get; set; }
+        public DateTime CreateTime { get; set; }
         public ICollection<Comment> Replies { get; set; } = new List<Comment>();
     }
 
@@ -35,6 +36,10 @@ namespace Entites.Users
                 .WithMany(x => x.Replies)
                 .HasForeignKey(x => x.ParentId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(x => x.User)
+       .WithMany()
+       .HasForeignKey(x => x.UserId);
         }
     }
 }

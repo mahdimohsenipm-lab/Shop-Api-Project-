@@ -4,7 +4,7 @@ using Entites.Users;
 using Microsoft.AspNetCore.Identity;
 using Services.ViewModel.Site;
 
-namespace Services.CommentService.Site
+namespace Services.CommentService.Site.AddComent
 {
     public class AddCommentService : IAddCommentService
     {
@@ -56,6 +56,8 @@ namespace Services.CommentService.Site
             }
 
             result.IsConfirmed = false;
+            result.CreateTime = DateTime.UtcNow;
+
             result.User = user;
             await _repository.AddAsync(result, cancellationToken);
     

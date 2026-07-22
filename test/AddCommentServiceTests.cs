@@ -5,7 +5,7 @@ using Entites.Users;
 using FluentAssertions;
 using Microsoft.AspNetCore.Identity;
 using Moq;
-using Services.CommentService.Site;
+using Services.CommentService.Site.AddComent;
 using Services.ViewModel.Site;
 using System.Xml.Linq;
 
@@ -115,7 +115,7 @@ namespace test
                 .Setup(x => x.Map<Comment>(request))
                 .Returns(new Comment
                 {
-                    UserId = "123"
+                    UserId = 123
                 });
 
             _userManager
@@ -147,7 +147,7 @@ namespace test
 
             var comment = new Comment
             {
-                UserId = "123"
+                UserId = 123
             };
 
             var user = new User();
@@ -161,7 +161,7 @@ namespace test
                 .Returns(comment);
 
             _userManager
-                .Setup(x => x.FindByIdAsync(comment.UserId))
+                .Setup(x => x.FindByIdAsync(comment.UserId.ToString()))
                 .ReturnsAsync(user);
 
             _repository

@@ -15,7 +15,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Services.CategoryService.Area.GetProductByCatId;
 using Services.CategoryService.Site.GetCategoryForSite;
-using Services.CommentService.Site;
+using Services.CommentService.Site.AddComent;
+using Services.CommentService.Site.GetComment;
 using Services.DiscountCodeService.Area.ActivationService;
 using Services.DiscountCodeService.Area.AddDiscountCode;
 using Services.DiscountCodeService.Area.GetDiscountCode;
@@ -87,6 +88,8 @@ namespace WebFramework.Configuration
             services.AddScoped<IGetTimeLineService, GetTimeLineService>();
             services.AddScoped<IApplyDiscountCodeService, ApplyDiscountCodeService>();
             services.AddScoped<IAddCommentService, AddCommentService>();
+            services.AddScoped<IGetCommentService, GetCommentService>();
+
 
 
 

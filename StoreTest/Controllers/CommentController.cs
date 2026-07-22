@@ -1,7 +1,10 @@
 ﻿using Entites.Users;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Services.CommentService.Site;
+using Services.CommentService.Site.AddComent;
+using Services.CommentService.Site.GetComment;
 using Services.ViewModel.Site;
 using WebFramework.Filter;
 
@@ -14,16 +17,26 @@ namespace StoreTest.Controllers
     {
         private readonly IAddCommentService _addCommentService;
         private readonly UserManager<User> _userManager;
-        public CommentController(IAddCommentService addCommentService, UserManager<User> userManager)
+        private readonly IGetCommentService _getCommentService;
+        public CommentController(IAddCommentService addCommentService, UserManager<User> userManager,IGetCommentService getCommentService)
         {
             _addCommentService = addCommentService;
             _userManager = userManager;
+            _getCommentService = getCommentService;
         }
-        public IActionResult Index()
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> Get(int productId, CancellationToken cancellationToken)
         {
-            return View();
+            var Comment = await _getCommentService.Execute(productId,cancellationToken);
+            if (Comment==null)
+            {
+                return NotFound();
+            }
+            return Ok(Comment);
         }
         [HttpPost("[action]")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> Add(RequestAddComment request , CancellationToken cancellationToken)
         {
             string userid =  _userManager.GetUserId(User);

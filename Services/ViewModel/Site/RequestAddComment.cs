@@ -10,6 +10,8 @@ namespace Services.ViewModel.Site
         public string Text { get; set; } = null!;
         public int? ParentId { get; set; }
         public string? UserId { get; set; }
+
+        public DateTime CreateTime { get; set; }
     }
 
     public class CommentConfiguration : IEntityTypeConfiguration<RequestAddComment>

@@ -11,6 +11,7 @@ using Services.ProductsServices.Querys.GetProductSite;
 using Services.ViewModel.Area.Model.Dto;
 using Services.ViewModel.Area.Model.Request;
 using Services.ViewModel.Site;
+using Services.ViewModel.Site.Dto.Comment;
 using StoreTest.Areas.Admin.Controllers;
 using System.Reflection;
 
@@ -61,6 +62,10 @@ namespace WebFramework.CustomMapping
             services.CreateMap<DiscountCode, RenewRequest>().ReverseMap();
             services.CreateMap<DiscountCode, RequestUpdateDiscountCode>().ReverseMap();
             services.CreateMap<Comment, RequestAddComment>().ReverseMap();
+
+           services.CreateMap<Comment, CommentDto>()
+    .ForMember(dest => dest.FullName,
+        opt => opt.MapFrom(src => src.User.FullName));
 
 
 

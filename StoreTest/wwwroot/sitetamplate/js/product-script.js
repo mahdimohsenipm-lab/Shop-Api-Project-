@@ -1,9 +1,12 @@
 ﻿document.addEventListener("DOMContentLoaded", () => {
     // ۱. گرفتن آی‌دی محصول از آدرس صفحه
     const urlParams = new URLSearchParams(window.location.search);
-    const productId = urlParams.get('id');
+    let productId = new URLSearchParams(window.location.search).get("id");
     const loadingDiv = document.getElementById('loading');
     const contentDiv = document.getElementById('content');
+    let selectedRate = 5;
+ 
+
     // آدرس پایه سرور شما برای تصاویر
     const baseUrl = 'https://localhost:7061/';
     async function loadProductData() {
@@ -19,7 +22,9 @@
             }
             const result = await response.json();
             const p = result.data || result; // مدیریت ساختار ریسپانس
+           
             renderProduct(p);
+            loadComments(productId);
         } catch (err) {
             console.error("Error fetching product:", err);
             showError("خطا در دریافت اطلاعات محصول. لطفاً اتصال اینترنت یا سرور را بررسی کنید.");
@@ -44,6 +49,10 @@
                  onclick="changeMainImage(this.src)">
         `).join('');
         }
+
+
+
+
 
         // ===========================
         // مشخصات فنی
@@ -218,6 +227,119 @@
             </div>
 
         </div>
+
+        <!-- =======================
+     Comments Section
+======================== -->
+<div class="comments-section">
+
+    <div class="comments-header">
+
+        <div class="comments-info">
+
+            <h2>دیدگاه کاربران</h2>
+
+            <div class="comment-summary">
+
+                <span id="averageRate">0.0</span>
+
+                <div id="averageStars" class="stars">
+                    ☆☆☆☆☆
+                </div>
+
+                <span id="totalComments">
+                    0 دیدگاه
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- فرم ثبت نظر -->
+
+    <div class="comment-form">
+
+        <h3>ثبت دیدگاه</h3>
+
+        <div class="rating-select">
+
+            <span
+                class="rate-star"
+                data-rate="1">
+                ★
+            </span>
+
+            <span
+                class="rate-star"
+                data-rate="2">
+                ★
+            </span>
+
+            <span
+                class="rate-star"
+                data-rate="3">
+                ★
+            </span>
+
+            <span
+                class="rate-star"
+                data-rate="4">
+                ★
+            </span>
+
+            <span
+                class="rate-star"
+                data-rate="5">
+                ★
+            </span>
+
+        </div>
+
+        <textarea
+
+            id="commentText"
+
+            placeholder="نظر خود را بنویسید..."
+            rows="5">
+
+        </textarea>
+
+        <button
+
+            id="submitComment"
+
+            class="btn-comment">
+
+            ثبت دیدگاه
+
+        </button>
+
+    </div>
+
+
+    <!-- لیست نظرات -->
+
+    <div
+
+        id="commentsContainer"
+
+        class="comments-list">
+
+        <div class="loading-comments">
+
+            در حال دریافت نظرات...
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
     `;
 
         loadingDiv.style.display = "none";
@@ -229,7 +351,15 @@
         loadingDiv.querySelector('.spinner')?.remove();
     }
     // اجرای دریافت اطلاعات
+
     loadProductData();
+
+   
+    
+
+
+    
+
 });
 // ==========================================
 // توابع عمومی (Global Functions)
