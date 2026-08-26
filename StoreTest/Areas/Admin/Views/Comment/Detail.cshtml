@@ -1,0 +1,603 @@
+﻿@using Services.CommentService.Area.GetCommentDetailPanel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model CommentDetailDto
+
+@{
+    ViewData["Title"] = "جزئیات کامنت";
+    Layout = "~/Areas/Admin/Views/Shared/AdminLayout.cshtml";
+}
+<div class="container-fluid">
+
+    <!-- ================= Header ================= -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <div class="d-flex align-items-center mb-2">
+
+                <div class="bg-primary text-white rounded-circle d-flex
+                            align-items-center justify-content-center mr-3"
+                     style="width:45px;height:45px;">
+
+                    <i class="fa fa-comment"></i>
+
+                </div>
+
+                <div>
+                    <h4 class="mb-0 font-weight-bold">
+                        جزئیات کامنت
+                    </h4>
+
+                    <small class="text-muted">
+                        مشاهده اطلاعات کامل کامنت #@Model.Id
+                    </small>
+                </div>
+
+            </div>
+        </div>
+
+
+        <div>
+
+            <a asp-area="Admin"
+               asp-controller="Comment"
+               asp-action="Index"
+               class="btn btn-light border mr-2">
+
+                <i class="fa fa-arrow-right"></i>
+                بازگشت
+
+            </a>
+
+
+         
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= Main ================= -->
+
+    <div class="row">
+
+        <!-- ================= Left ================= -->
+        <div class="col-xl-8">
+
+
+            <!-- Comment Card -->
+            <div class="card border-0 shadow-sm mb-4">
+
+                <div class="card-body p-4">
+
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+
+                        <div>
+
+                            <span class="text-muted small">
+                                متن دیدگاه
+                            </span>
+
+                            <h5 class="font-weight-bold mb-0 mt-1">
+                                دیدگاه کاربر
+                            </h5>
+
+                        </div>
+
+
+                        @if (Model.IsConfirmed)
+                        {
+                            <span class="badge badge-success px-3 py-2">
+                                <i class="fa fa-check-circle"></i>
+                                تأیید شده
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-warning px-3 py-2">
+                                <i class="fa fa-clock-o"></i>
+                                در انتظار تأیید
+                            </span>
+                        }
+
+                    </div>
+
+
+                    <!-- Comment Body -->
+                    <div class="p-4 rounded"
+                         style="background:#f8f9fc;
+                                border-right:4px solid #007bff;">
+
+                        <div class="d-flex">
+
+                            <div class="mr-3">
+
+                                <div class="rounded-circle bg-primary text-white
+                                            d-flex align-items-center
+                                            justify-content-center"
+                                     style="width:45px;height:45px;">
+
+                                    <i class="fa fa-user"></i>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="flex-grow-1">
+
+                                <div class="d-flex justify-content-between">
+
+                                    <strong>
+                                        @Model.UserName
+                                    </strong>
+
+                                    <small class="text-muted">
+                                        @Model.CreateTime.ToString("yyyy/MM/dd HH:mm")
+                                    </small>
+
+                                </div>
+
+
+                                <div class="mt-3"
+                                     style="line-height:2.1;
+                                            white-space:pre-line;">
+
+                                    @Model.Text
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= Rating ================= -->
+
+            <div class="card border-0 shadow-sm mb-4">
+
+                <div class="card-body p-4">
+
+                    <div class="row align-items-center">
+
+                        <div class="col-md-6">
+
+                            <small class="text-muted d-block mb-2">
+                                امتیاز ثبت شده
+                            </small>
+
+                            <div class="d-flex align-items-center">
+
+                                <span class="display-4 font-weight-bold mr-3">
+                                    @Model.Rate
+                                </span>
+
+                                <div>
+
+                                    <div style="font-size:20px;">
+
+                                        @for (int i = 1; i <= 5; i++)
+                                        {
+                                            if (i <= Model.Rate)
+                                            {
+                                                <i class="fa fa-star text-warning"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="fa fa-star-o text-muted"></i>
+                                            }
+                                        }
+
+                                    </div>
+
+                                    <small class="text-muted">
+                                        از ۵ امتیاز
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    
+
+                        <div class="col-md-6">
+
+                            <small class="text-muted d-block mb-2">
+                                وضعیت بررسی
+                            </small>
+
+                            @if (Model.IsConfirmed)
+                            {
+                                <div class="d-flex align-items-center">
+
+                                    <div class="rounded-circle bg-success text-white
+                                                    d-flex align-items-center
+                                                    justify-content-center mr-3"
+                                         style="width:42px;height:42px;">
+
+                                        <i class="fa fa-check"></i>
+
+                                    </div>
+
+                                    <div>
+
+                                        <strong class="d-block">
+                                            کامنت تأیید شده
+                                        </strong>
+
+                                        <small class="text-muted">
+                                            این دیدگاه برای کاربران قابل نمایش است.
+                                        </small>
+
+                                    </div>
+
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="d-flex align-items-center">
+
+                                    <div class="rounded-circle bg-warning text-white
+                                                    d-flex align-items-center
+                                                    justify-content-center mr-3"
+                                         style="width:42px;height:42px;">
+
+                                        <i class="fa fa-clock-o"></i>
+
+                                    </div>
+
+                                    <div>
+
+                                        <strong class="d-block">
+                                            در انتظار بررسی
+                                        </strong>
+
+                                        <small class="text-muted">
+                                            این دیدگاه هنوز تأیید نشده است.
+                                        </small>
+
+                                    </div>
+
+                                </div>
+                            }
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= Parent ================= -->
+            @if (Model.ParentId.HasValue)
+            {
+                <div class="card border-0 shadow-sm mb-4">
+
+                    <div class="card-body p-4">
+
+                        <div class="d-flex align-items-center mb-3">
+
+                            <div class="rounded-circle bg-light text-primary
+                                            d-flex align-items-center
+                                            justify-content-center mr-3"
+                                 style="width:40px;height:40px;">
+
+                                <i class="fa fa-reply"></i>
+
+                            </div>
+
+                            <div>
+
+                                <h6 class="font-weight-bold mb-0">
+                                    پاسخ به کامنت
+                                </h6>
+
+                                <small class="text-muted">
+                                    کامنت والد #@Model.ParentId
+                                </small>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="alert alert-light border mb-0">
+
+                            <p class="mb-0"
+                               style="line-height:2;
+                                          white-space:pre-line;">
+
+                                @Model.ParentText
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            }
+
+
+        </div>
+
+
+        <!-- ================= Right ================= -->
+
+        <div class="col-xl-4">
+
+
+            <!-- User -->
+            <div class="card border-0 shadow-sm mb-4">
+
+                <div class="card-body p-4">
+
+                    <div class="d-flex align-items-center mb-4">
+
+                        <div class="rounded-circle bg-primary text-white
+                                    d-flex align-items-center
+                                    justify-content-center mr-3"
+                             style="width:55px;height:55px;
+                                    font-size:20px;">
+
+                            <i class="fa fa-user"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h6 class="font-weight-bold mb-1">
+                                @Model.UserName
+                            </h6>
+
+                            <small class="text-muted">
+                                کاربر ثبت کننده
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="border-top pt-3">
+
+                        <div class="mb-3">
+
+                            <small class="text-muted d-block">
+                                شناسه کاربر
+                            </small>
+
+                            <span class="font-weight-bold">
+                                #@Model.UserId
+                            </span>
+
+                        </div>
+
+
+                        <div>
+
+                            <small class="text-muted d-block">
+                                ایمیل
+                            </small>
+
+                            <span>
+                                @Model.UserEmail
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Product -->
+            <div class="card border-0 shadow-sm mb-4">
+
+                <div class="card-body p-4">
+
+                    <div class="d-flex align-items-center mb-4">
+
+                        <div class="rounded-circle bg-info text-white
+                                    d-flex align-items-center
+                                    justify-content-center mr-3"
+                             style="width:45px;height:45px;">
+
+                            <i class="fa fa-shopping-bag"></i>
+
+                        </div>
+
+                        <div>
+
+                            <small class="text-muted d-block">
+                                محصول
+                            </small>
+
+                            <strong>
+                                @Model.ProductName
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="d-flex justify-content-between
+                                border-top pt-3 mb-3">
+
+                        <span class="text-muted">
+                            شناسه محصول
+                        </span>
+
+                        <span class="font-weight-bold">
+                            #@Model.ProductId
+                        </span>
+
+                    </div>
+
+
+                    <a asp-area="Admin"
+                       asp-controller="Products"
+                       asp-action="Detail"
+                       asp-route-id="@Model.ProductId"
+                       class="btn btn-outline-primary btn-block">
+
+                        <i class="fa fa-external-link"></i>
+                        مشاهده محصول
+
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- Replies -->
+            <div class="card border-0 shadow-sm mb-4">
+
+                <div class="card-body p-4">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+
+                            <small class="text-muted d-block mb-1">
+                                پاسخ‌ها
+                            </small>
+
+                            <h3 class="font-weight-bold mb-0">
+                                @Model.RepliesCount
+                            </h3>
+
+                        </div>
+
+
+                        <div class="rounded-circle bg-light text-primary
+                                    d-flex align-items-center
+                                    justify-content-center"
+                             style="width:55px;height:55px;">
+
+                            <i class="fa fa-comments fa-lg"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Danger Zone -->
+            <div class="card border-danger shadow-sm">
+
+                <div class="card-body">
+
+                    <h6 class="text-danger font-weight-bold">
+                        <i class="fa fa-exclamation-triangle"></i>
+                        عملیات خطرناک
+                    </h6>
+
+                    <p class="small text-muted">
+                        حذف کامنت غیرقابل بازگشت است.
+                    </p>
+
+                    <button type="button"
+                            class="btn btn-outline-danger btn-block deleteComment"
+                            data-id="@Model.Id">
+
+                        <i class="fa fa-trash"></i>
+                        حذف این کامنت
+
+                    </button>
+                 
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+        
+
+
+
+@section Scripts
+{
+
+    <link href="~/Sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+    <script src="~/Sweetalert2/sweetalert2.min.js"></script>
+    <script>
+
+       
+        $(document).on("click", ".deleteComment", function () {
+
+        let id = $(this).data("id");
+
+
+                swal.fire({
+                    title: 'حذف کامنت',
+                    text: "کاربر گرامی از حذف کامنت مطمئن هستید؟",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#7cacbe',
+                    confirmButtonText: 'بله ، کامنت حذف شود',
+                    cancelButtonText: 'خیر'
+                }).then((result) => {
+                    if (result.value) {
+                        var postData = {
+                            'id': id,
+                        };
+
+                        $.ajax({
+                            dataType: 'json',
+                            type: "POST",
+                            url: "/Admin/Comment/Delete",
+                            data: postData,
+                            success: function (data) {
+                                if (data.isSuccess == true) {
+                                    swal.fire(
+                                        'موفق!',
+                                        data.message,
+                                        'success'
+                                    ).then(function (isConfirm) {
+                                         window.location.href =
+                                          '/Admin/Comment/Index';
+                                    });
+                                }
+                                else {
+
+                                    swal.fire(
+                                        'هشدار!',
+                                        data.message,
+                                        'warning'
+                                    );
+
+                                }
+                            },
+                            error: function (request, status, error) {
+                                alert(request.responseText);
+                            }
+
+                        });
+
+                    }
+                })
+            });
+
+
+    </script>
+}

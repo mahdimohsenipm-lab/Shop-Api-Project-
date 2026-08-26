@@ -15,6 +15,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Services.CategoryService.Area.GetProductByCatId;
 using Services.CategoryService.Site.GetCategoryForSite;
+using Services.CommentService.Area.GetCommentDetailPanel;
+using Services.CommentService.Area.GetCommentPanel;
 using Services.CommentService.Site.AddComent;
 using Services.CommentService.Site.GetComment;
 using Services.DiscountCodeService.Area.ActivationService;
@@ -82,13 +84,17 @@ namespace WebFramework.Configuration
            services.AddScoped<IUpdateDiscountService, UpdateDiscountService>();
            services.AddScoped<IGetDiscountService, GetDiscountService>();
            services.AddScoped<IAddDiscountCodeService, AddDiscountCodeService>();
-            services.AddScoped<IGetDiscountCodeService, GetDiscountCodeService>();
-            services.AddScoped<IPriceCalculatorService, PriceCalculatorService>();
-            services.AddScoped<IActivationService, ActivationService>();
-            services.AddScoped<IGetTimeLineService, GetTimeLineService>();
-            services.AddScoped<IApplyDiscountCodeService, ApplyDiscountCodeService>();
-            services.AddScoped<IAddCommentService, AddCommentService>();
-            services.AddScoped<IGetCommentService, GetCommentService>();
+           services.AddScoped<IGetDiscountCodeService, GetDiscountCodeService>();
+           services.AddScoped<IPriceCalculatorService, PriceCalculatorService>();
+           services.AddScoped<IActivationService, ActivationService>();
+           services.AddScoped<IGetTimeLineService, GetTimeLineService>();
+           services.AddScoped<IApplyDiscountCodeService, ApplyDiscountCodeService>();
+           services.AddScoped<IAddCommentService, AddCommentService>();
+           services.AddScoped<IGetCommentService, GetCommentService>();
+           services.AddScoped<IGetCommentPanelService, GetCommentPanelService>();
+            services.AddScoped<IGetCommentDetailPanelService, GetCommentDetailPanelService>();
+
+
 
 
 

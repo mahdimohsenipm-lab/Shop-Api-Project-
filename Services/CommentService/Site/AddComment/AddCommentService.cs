@@ -23,6 +23,7 @@ namespace Services.CommentService.Site.AddComent
         }
         public async Task<AddCommentResponse> Execute(RequestAddComment request, CancellationToken cancellationToken)
         {
+            
              if (request is null)
                 {
                 return new AddCommentResponse 

@@ -1,0 +1,324 @@
+﻿@using X.PagedList
+@using X.PagedList.Mvc.Core
+@using Services.CommentService.Area.GetCommentPanel
+@model GetCommentsAdminResult
+
+@{
+    ViewData["Title"] = "نظرات";
+    Layout = "~/Areas/Admin/Views/Shared/AdminLayout.cshtml";
+}
+<div class="row mb-4">
+
+    <div class="col-md-4">
+        <div class="card shadow-sm border-primary">
+            <div class="card-body text-center">
+                <h6>کل نظرات</h6>
+                <h3>@Model.TotalComments</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow-sm border-success">
+            <div class="card-body text-center">
+                <h6>تایید شده</h6>
+                <h3>@Model.ConfirmedComments</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow-sm border-warning">
+            <div class="card-body text-center">
+                <h6>در انتظار تایید</h6>
+                <h3>@Model.PendingComments</h3>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+<form method="get" class="form-inline mb-3">
+
+    <label class="mr-2">مرتب سازی</label>
+
+    <select class="form-control mr-2"
+            name="Sort"
+            onchange="this.form.submit()">
+
+        <option value="PendingFirst"
+                selected="@(Model.Request.Sort == CommentSortType.PendingFirst)">
+            در انتظار تایید
+        </option>
+
+        <option value="Newest"
+                selected="@(Model.Request.Sort == CommentSortType.Newest)">
+            جدیدترین
+        </option>
+
+        <option value="Oldest"
+                selected="@(Model.Request.Sort == CommentSortType.Oldest)">
+            قدیمی ترین
+        </option>
+
+        <option value="HighestRate"
+                selected="@(Model.Request.Sort == CommentSortType.HighestRate)">
+            بیشترین امتیاز
+        </option>
+
+    </select>
+
+</form>
+
+
+
+
+<div class="card shadow-sm">
+
+    <div class="card-header">
+        <h5 class="mb-0">لیست نظرات</h5>
+    </div>
+
+    <div class="card-body p-0">
+
+        <table class="table table-bordered table-hover mb-0">
+
+            <thead class="thead-light">
+                <tr class="text-center">
+                    <th>#</th>
+                    <th>محصول</th>
+                    <th>کاربر</th>
+                    <th>متن نظر</th>
+                    <th>امتیاز</th>
+                    <th>وضعیت</th>
+                    <th>تاریخ ثبت</th>
+                    <th>عملیات</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                @foreach (var item in Model.Comments)
+                {
+                    <tr>
+
+                        <td class="text-center">@item.Id</td>
+
+                        <td>@item.ProductName</td>
+
+                        <td>@item.UserName</td>
+
+                        <td style="max-width:300px;">
+                            @(item.Text.Length > 70
+                                                    ? item.Text.Substring(0, 70) + "..."
+                                                    : item.Text)
+                    </td>
+
+                        <td class="text-center">
+                            @item.Rate
+                        </td>
+
+                        <td class="text-center">
+                        @if (item.IsConfirmed)
+                            {
+                                <span class="badge badge-success">تایید شده</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-warning">در انتظار تایید</span>
+                            }
+                        </td>
+
+                        <td class="text-center">
+                            @item.CreateTime.ToString("yyyy/MM/dd HH:mm")
+                        </td>
+
+                        <td class="text-center">
+
+                            <a href="~/Admin/Comment/Detail/@item.Id"
+                               
+                               class="btn btn-info btn-sm">
+                                مشاهده
+                            </a>
+
+                            @if (!item.IsConfirmed)
+                            {
+                                <button class="btn btn-success btn-sm confirmComment"
+                                        data-id="@item.Id">
+                                    تایید
+                                </button>
+                            }
+
+                            <button class="btn btn-danger btn-sm deleteComment"
+                                    data-id="@item.Id">
+                                حذف
+                            </button>
+
+                        </td>
+
+                    </tr>
+                }
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+<div class="mt-3 d-flex justify-content-center">
+
+    @Html.PagedListPager(
+    Model.Comments,
+        page => Url.Action("Index", new
+        {
+            page,
+            Sort = Model.Request.Sort
+        
+        }),
+        
+        new X.PagedList.Mvc.Core.PagedListRenderOptions
+        {
+            DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+            DisplayLinkToNextPage = PagedListDisplayMode.Always,
+            DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+            DisplayLinkToLastPage = PagedListDisplayMode.Always,
+            LiElementClasses = new[] { "page-item" },
+            PageClasses = new[] { "page-link" }
+        })
+
+</div>
+
+
+
+        
+@section Scripts
+{
+    <link href="~/Sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+    <script src="~/Sweetalert2/sweetalert2.min.js"></script>
+
+    <script>
+
+
+
+
+
+        $(document).on("click", ".deleteComment", function () {
+
+        let id = $(this).data("id");
+
+
+                swal.fire({
+                    title: 'حذف کامنت',
+                    text: "کاربر گرامی از حذف کامنت مطمئن هستید؟",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#7cacbe',
+                    confirmButtonText: 'بله ، کامنت حذف شود',
+                    cancelButtonText: 'خیر'
+                }).then((result) => {
+                    if (result.value) {
+                        var postData = {
+                            'id': id,
+                        };
+
+                        $.ajax({
+                            dataType: 'json',
+                            type: "POST",
+                            url: "/Admin/Comment/Delete",
+                            data: postData,
+                            success: function (data) {
+                                if (data.isSuccess == true) {
+                                    swal.fire(
+                                        'موفق!',
+                                        data.message,
+                                        'success'
+                                    ).then(function (isConfirm) {
+                                        location.reload();
+                                    });
+                                }
+                                else {
+
+                                    swal.fire(
+                                        'هشدار!',
+                                        data.message,
+                                        'warning'
+                                    );
+
+                                }
+                            },
+                            error: function (request, status, error) {
+                                alert(request.responseText);
+                            }
+
+                        });
+
+                    }
+                })
+            });
+
+
+
+          $(document).on("click", ".confirmComment", function () {
+
+            let id = $(this).data("id");
+
+            swal.fire({
+                title: 'تایید کامنت',
+                text: "کاربر گرامی از تایید کامنت مطمئن هستید؟",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#7cacbe',
+                confirmButtonText: 'بله ، کامنت تایید شود',
+                cancelButtonText: 'خیر'
+            }).then((result) => {
+                if (result.value) {
+                    var postData = {
+                        'id': id,
+                    };
+
+                    $.ajax({
+                        dataType: 'json',
+                        type: "POST",
+                        url: "/Admin/Comment/Confirm",
+                        data: postData,
+        success: function (data) {
+                                   if (data.isSuccess == true) {
+                                       swal.fire(
+                                           'موفق!',
+                                           data.message,
+                                           'success'
+                                       ).then(function (isConfirm) {
+                                           location.reload();
+                                       });
+                                   }
+                                   else {
+
+                                       swal.fire(
+                                           'هشدار!',
+                                           data.message,
+                                           'warning'
+                                       );
+
+                                   }
+                               },
+                               error: function (request, status, error) {
+                                   alert(request.responseText);
+                               }
+
+                           });
+
+                }
+            });
+
+        });
+    </script>
+
+ }

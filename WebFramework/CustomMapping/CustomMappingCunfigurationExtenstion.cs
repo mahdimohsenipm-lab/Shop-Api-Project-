@@ -3,6 +3,7 @@ using Entites.Orders;
 using Entites.Products;
 using Entites.Users;
 using Microsoft.Extensions.DependencyInjection;
+using Services.CommentService.Area.GetCommentPanel;
 using Services.DiscountCodeService.Area.AddDiscountCode;
 using Services.ProductsServices.Commands.AddProduct;
 using Services.ProductsServices.Querys.GetProductDetail;
@@ -63,7 +64,16 @@ namespace WebFramework.CustomMapping
             services.CreateMap<DiscountCode, RequestUpdateDiscountCode>().ReverseMap();
             services.CreateMap<Comment, RequestAddComment>().ReverseMap();
 
-           services.CreateMap<Comment, CommentDto>()
+
+           services.CreateMap<Comment, CommentAdminDto>()
+    .ForMember(d => d.ProductName,
+        opt => opt.MapFrom(s => s.Product.Name))
+    .ForMember(d => d.UserName,
+        opt => opt.MapFrom(s => s.User.UserName));
+
+
+
+            services.CreateMap<Comment, CommentDto>()
     .ForMember(dest => dest.FullName,
         opt => opt.MapFrom(src => src.User.FullName));
 

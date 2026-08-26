@@ -1,4 +1,5 @@
-﻿using Entites.Users;
+﻿using Data.Contracts;
+using Entites.Users;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -15,14 +16,18 @@ namespace StoreTest.Controllers
     [ApiResultFilter]
     public class CommentController : Controller
     {
+      
         private readonly IAddCommentService _addCommentService;
         private readonly UserManager<User> _userManager;
         private readonly IGetCommentService _getCommentService;
-        public CommentController(IAddCommentService addCommentService, UserManager<User> userManager,IGetCommentService getCommentService)
+        public CommentController(IAddCommentService addCommentService,
+            UserManager<User> userManager,IGetCommentService getCommentService
+           )
         {
             _addCommentService = addCommentService;
             _userManager = userManager;
             _getCommentService = getCommentService;
+
         }
 
         [HttpGet("[action]")]
@@ -59,5 +64,6 @@ namespace StoreTest.Controllers
                 
         
         }
+
     }
 }
