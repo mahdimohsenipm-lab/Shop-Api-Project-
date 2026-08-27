@@ -57,58 +57,149 @@ namespace Services.ProductsServices.Commands.AddProduct
 
             List<ProductImage> images = new List<ProductImage>();
 
-            foreach (var item in Productdto.Image)
+            var uploadedFiles = await UploadFilesAsync(Productdto.Image,cancellationToken);
+            if (uploadedFiles==null)
             {
-                var src = UploadFile(item);
-
-                images.Add(new ProductImage()
-                {
-                    
-                    Product = newproduct,
-                    Src = src.FileNameAddress
-
-                });
-
+               throw new Exception("مشکلی در ارسال تصاویر پیش امده");
             }
+            var image = uploadedFiles
+         .Select(file => new ProductImage
+         {
+             Product = newproduct,
+             Src = file.FileNameAddress
+         })
+         .ToList();
 
-           await productImageRepository.AddRangeAsync(images,cancellationToken);
+
+            await productImageRepository.AddRangeAsync(image, cancellationToken);
 
         }
-        private UplodeFileRequest UploadFile(IFormFile file)
+        private async Task<List<UplodeFileRequest>> UploadFilesAsync(
+     IEnumerable<IFormFile> files,
+     CancellationToken cancellationToken)
         {
-            if (file == null || file.Length == 0)
+            const int maxFiles = 5;
+            const long maxFileSize = 5 * 1024 * 1024;
+
+            var allowedExtensions = new HashSet<string>(
+                StringComparer.OrdinalIgnoreCase)
+    {
+        ".jpg",
+        ".jpeg",
+        ".png",
+        ".webp"
+    };
+
+            var allowedContentTypes = new HashSet<string>(
+                StringComparer.OrdinalIgnoreCase)
+    {
+        "image/jpeg",
+        "image/png",
+        "image/webp"
+    };
+
+            var fileList = files?
+                .Where(x => x is not null && x.Length > 0)
+                .ToList()
+                ?? new List<IFormFile>();
+
+            if (fileList.Count == 0)
+                return new List<UplodeFileRequest>();
+
+            if (fileList.Count > maxFiles)
+                throw new InvalidOperationException(
+                    "حداکثر ۵ تصویر می‌توانید آپلود کنید.");
+
+            // ابتدا تمام فایل‌ها را Validate می‌کنیم
+            // تا اگر یکی مشکل داشت، هیچ فایلی ذخیره نشود.
+            foreach (var file in fileList)
             {
-                return new UplodeFileRequest
+                if (file.Length > maxFileSize)
                 {
-                    Statuse = false,
-                    FileNameAddress = ""
-                };
+                    throw new InvalidOperationException(
+                        $"حجم فایل {file.FileName} بیشتر از ۵ مگابایت است.");
+                }
+
+                var extension = Path.GetExtension(file.FileName);
+
+                if (!allowedExtensions.Contains(extension))
+                {
+                    throw new InvalidOperationException(
+                        $"فرمت فایل {file.FileName} مجاز نیست.");
+                }
+
+                if (!allowedContentTypes.Contains(file.ContentType))
+                {
+                    throw new InvalidOperationException(
+                        $"نوع فایل {file.FileName} معتبر نیست.");
+                }
             }
 
-            string folder = "images/ProductImages/";
-            var uploadsRootFolder = Path.Combine(environment.WebRootPath, folder);
+            string folder = "images/ProductImages";
 
-            if (!Directory.Exists(uploadsRootFolder))
+            string uploadsRootFolder = Path.Combine(
+                environment.WebRootPath,
+                folder);
+
+            Directory.CreateDirectory(uploadsRootFolder);
+
+            var uploadedFiles = new List<UplodeFileRequest>();
+
+            try
             {
-                Directory.CreateDirectory(uploadsRootFolder);
+                foreach (var file in fileList)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    var extension = Path.GetExtension(file.FileName)
+                        .ToLowerInvariant();
+
+                    var fileName = $"{Guid.NewGuid():N}{extension}";
+
+                    var filePath = Path.Combine(
+                        uploadsRootFolder,
+                        fileName);
+
+                    await using var fileStream = new FileStream(
+                        filePath,
+                        FileMode.CreateNew,
+                        FileAccess.Write,
+                        FileShare.None,
+                        bufferSize: 81920,
+                        useAsync: true);
+
+                    await file.CopyToAsync(
+                        fileStream,
+                        cancellationToken);
+
+                    uploadedFiles.Add(new UplodeFileRequest
+                    {
+                        Statuse = true,
+                        FileNameAddress = $"{folder}/{fileName}"
+                    });
+                }
+
+                return uploadedFiles;
             }
-
-            string extension = Path.GetExtension(file.FileName); // فقط پسوند
-            string fileName = DateTime.Now.Ticks.ToString() + extension;
-            var filePath = Path.Combine(uploadsRootFolder, fileName);
-
-            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            catch
             {
-                file.CopyTo(fileStream);
+                // اگر وسط آپلود خطایی رخ داد،
+                // فایل‌هایی که تا اینجا ذخیره شده‌اند حذف می‌شوند.
+                foreach (var file in uploadedFiles)
+                {
+                    var fileName = Path.GetFileName(file.FileNameAddress);
+
+                    var filePath = Path.Combine(
+                        uploadsRootFolder,
+                        fileName);
+
+                    if (File.Exists(filePath))
+                        File.Delete(filePath);
+                }
+
+                throw;
             }
-
-            return new UplodeFileRequest
-            {
-                FileNameAddress = Path.Combine(folder, fileName).Replace("\\", "/"),
-                Statuse = true
-            };
         }
-     
 
     }
 }

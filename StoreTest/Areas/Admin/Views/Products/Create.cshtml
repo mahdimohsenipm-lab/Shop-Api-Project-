@@ -5,12 +5,12 @@
 }
 
 
-
+<link href="~/itemtamplate/css/dashboard/uplodeimage.css" rel="stylesheet" />
 
 <section class="basic-elements">
     <div class="row">
         <div class="col-sm-12">
-            <h2 class="content-header">فرم ثبت نام کاربر جدید</h2>
+            <h2 class="content-header">فرم ثبت محصول جدید</h2>
         </div>
     </div>
     <div class="row">
@@ -18,7 +18,7 @@
             <div class="card">
                 <div class="card-header">
                     <div class="card-title-wrap bar-success">
-                        <h4 class="card-title mb-0">اطلاعات کاربر جدید را وارد نمایید</h4>
+                        <h4 class="card-title mb-0">اطلاعات محصول جدید را وارد نمایید</h4>
                     </div>
                 </div>
                 <div class="card-body">
@@ -59,10 +59,49 @@
 
                                     <div class="col-xl-4 col-lg-6 col-md-12 mb-1">
                                         <fieldset class="form-group">
-                                            <label for="basicInput">تصاویر </label>
-                                            <input type="file" multiple class="form-control" accept="image/*" id="Images">
+
+                                            <label>تصاویر محصول</label>
+
+                                            <div class="image-upload-wrapper">
+
+                                                <label for="Images" class="image-upload-box">
+                                                    <i class="fa fa-cloud-upload"></i>
+                                                    <span>افزودن تصویر</span>
+                                                    <small>JPG, JPEG, PNG, WEBP</small>
+                                                </label>
+
+                                                <input type="file"
+                                                       name="Images"
+                                                       multiple
+                                                       accept=".jpg,.jpeg,.png,.webp"
+                                                       id="Images"
+                                                       class="d-none">
+
+                                                <!-- Preview -->
+                                                <div id="imagePreview"
+                                                     class="image-preview-container">
+                                                </div>
+
+                                            </div>
+
+                                            <div class="d-flex justify-content-between mt-1">
+                                                <small class="text-muted">
+                                                    حداکثر ۵ تصویر
+                                                </small>
+
+                                                <small id="imageCounter"
+                                                       class="text-muted">
+                                                    ۰ / ۵
+                                                </small>
+                                            </div>
+
+                                            <small id="imageError"
+                                                   class="text-danger d-block mt-1">
+                                            </small>
+
                                         </fieldset>
                                     </div>
+
 
 
                                     <div class="col-xl-4 col-lg-6 col-md-12 mb-1">
@@ -156,6 +195,9 @@
 
     <script>
 
+
+
+
         $("#btnAddFeatures").on("click", function () {
 
             var Title = $("#Title").val();
@@ -183,15 +225,16 @@
 
         $('#btnAddProduct').on('click', function () {
 
-            var txtpicture = $("#Images")[0].files;
-             if (!txtpicture ||txtpicture.length==0 ) {
-                swal.fire(
-                    'هشدار!',
-                    " تصویر را باید وارد کنید",
-                    'warning'
-                );
-                return;
-            }
+               var txtpicture = selectedFiles;
+
+        if (!txtpicture || txtpicture.length === 0) {
+            Swal.fire(
+                'هشدار!',
+                'حداقل یک تصویر باید انتخاب کنید.',
+                'warning'
+            );
+            return;
+        }
 
               var category = $('#Category').val();
         // چک کردن اینکه آیا مقدار خالی است یا انتخاب نشده
@@ -217,16 +260,20 @@
 
 
 
-            var data = new FormData();
+                 var data = new FormData();
 
+        data.append("Name", $("#Name").val());
+        data.append("Brand", $("#Brand").val());
+        data.append("Price", $("#Price").val());
+        data.append("Inventory", $("#Inventory").val());
+        data.append("Displayed", $("#Displayed").prop("checked") ? true : false);
+        data.append("CategoryId", $('#Category').find('option:selected').val());
+        data.append("Description", $("#Description").val());
 
-            data.append("Name", $("#Name").val());
-            data.append("Brand", $("#Brand").val());
-            data.append("Price", $("#Price").val());
-            data.append("Inventory", $("#Inventory").val());
-            data.append("Displayed", $("#Displayed").prop("checked") ? true : false);
-            data.append("CategoryId", $('#Category').find('option:selected').val());
-            data.append("Description", $("#Description").val());
+        // اضافه کردن تصاویر
+        selectedFiles.forEach(function (file) {
+            data.append("Image", file);
+        });
 
 
 
@@ -296,5 +343,128 @@
                 // Do other operation
             });
         });
+
+
+                document.querySelector("form").addEventListener("submit", function () {
+
+            const dataTransfer = new DataTransfer();
+
+            selectedFiles.forEach(file => {
+                dataTransfer.items.add(file);
+            });
+
+            imageInput.files = dataTransfer.files;
+
+        });
+
+        const imageInput = document.getElementById("Images");
+        const imagePreview = document.getElementById("imagePreview");
+        const imageCounter = document.getElementById("imageCounter");
+        const imageError = document.getElementById("imageError");
+
+        const maxImages = 5;
+        const maxFileSize = 5 * 1024 * 1024;
+
+        let selectedFiles = [];
+
+        imageInput.addEventListener("change", function () {
+
+            imageError.textContent = "";
+
+            const newFiles = Array.from(this.files);
+
+            for (const file of newFiles) {
+
+                if (selectedFiles.length >= maxImages) {
+                    imageError.textContent = "حداکثر ۵ تصویر می‌توانید انتخاب کنید.";
+                    break;
+                }
+
+                if (!file.type.startsWith("image/")) {
+                    imageError.textContent = "فقط فایل‌های تصویری قابل انتخاب هستند.";
+                    continue;
+                }
+
+                if (file.size > maxFileSize) {
+                    imageError.textContent =
+                        `حجم تصویر "${file.name}" بیشتر از ۵ مگابایت است.`;
+                    continue;
+                }
+
+                // جلوگیری از انتخاب فایل تکراری
+                const alreadyExists = selectedFiles.some(
+                    x => x.name === file.name &&
+                         x.size === file.size
+                );
+
+                if (alreadyExists) {
+                    continue;
+                }
+
+                selectedFiles.push(file);
+            }
+
+            renderImages();
+
+            // برای اینکه دوباره بتوان همان فایل را انتخاب کرد
+            this.value = "";
+        });
+
+
+        function renderImages() {
+
+            imagePreview.innerHTML = "";
+
+            selectedFiles.forEach((file, index) => {
+
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+
+                    const item = document.createElement("div");
+
+                    item.className = "image-preview-item";
+
+                    item.innerHTML = `
+                        <img src="${e.target.result}" alt="تصویر محصول">
+
+                        <button type="button"
+                                class="image-remove-btn"
+                                onclick="removeImage(${index})">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    `;
+
+                    imagePreview.appendChild(item);
+                };
+
+                reader.readAsDataURL(file);
+            });
+
+            imageCounter.textContent =
+                `${selectedFiles.length} / ${maxImages}`;
+        }
+
+
+        function removeImage(index) {
+
+            selectedFiles.splice(index, 1);
+
+            renderImages();
+        }
+
     </script>
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

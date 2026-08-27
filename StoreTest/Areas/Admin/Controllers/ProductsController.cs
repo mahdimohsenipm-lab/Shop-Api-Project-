@@ -110,8 +110,6 @@ namespace StoreTest.Areas.Admin.Controllers
         {
             await product.DeleteProducts(id, cancellationToken);
             return Ok();
-
-
         }
 
         [HttpPost]

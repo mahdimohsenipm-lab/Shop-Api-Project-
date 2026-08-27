@@ -19,6 +19,6 @@ namespace Services.ProductsServices.Commands.AddProduct
         public int CategoryId { get; set; }
         public List<ProductFitureRequest> Features { get; set; }
 
-        public List<IFormFile> Image { get; set; }
+        public IEnumerable<IFormFile> Image { get; set; }
     }
 }
